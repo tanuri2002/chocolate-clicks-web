@@ -40,7 +40,7 @@ export default function Home() {
       <section className="section-1">
         <div className="section-content">
           <div className="text-block">
-            <h2>Our patisserie produces</h2>
+            <h2>Our patisserie produces unique sweets for lovers of yummy</h2>
             <p>unique sweets for lovers of yummy</p>
           </div>
           <div className="clashed-image-container">
@@ -93,7 +93,7 @@ export default function Home() {
         <div className="gallery-container">
           {/* Left Image */}
           <div className="gallery-item left">
-            <img src="/front_img/l1.jpeg" alt="Brownies" />
+            <img src="\front_img\lef2.jpeg" />
             <div className="overlay overlay-top">
               <h3>Brownies</h3>
               <p>The beautiful frosty days</p>
@@ -102,7 +102,7 @@ export default function Home() {
 
           {/* Right Image */}
           <div className="gallery-item right">
-            <img src="/front_img/r1.jpeg" alt="Cake" />
+            <img src="\front_img\right2.jpeg" />
             <div className="overlay overlay-bottom">
               <h3>Cake</h3>
               <p>Joyful moments that deserve extra love</p>
@@ -115,7 +115,7 @@ export default function Home() {
         <div className="gallery-container">
           {/* Left Image */}
           <div className="gallery-item left">
-            <img src="/front_img/l1.jpeg" alt="Brownies" />
+            <img src="\front_img\cooki1.jpeg" />
             <div className="overlay overlay-top">
               <h3>Brownies</h3>
               <p>The beautiful frosty days</p>
@@ -124,7 +124,7 @@ export default function Home() {
 
           {/* Right Image */}
           <div className="gallery-item right">
-            <img src="/front_img/r1.jpeg" alt="Cake" />
+            <img src="\front_img\cooki2.jpeg" />
             <div className="overlay overlay-bottom">
               <h3>Cake</h3>
               <p>Joyful moments that deserve extra love</p>
@@ -157,8 +157,8 @@ export default function Home() {
       {/* Section 3: Normal Text Section */}
       <section className="section-3">
         <div className="section-3-content">
-          <h3>Online Store</h3>
-          <h2>Discover Sweet Delicious</h2>
+         
+          <h2>Special Editions from us</h2>
         </div>
       </section>
       {/* Section 5: Two Column Image Gallery */}
@@ -212,8 +212,8 @@ export default function Home() {
       {/* Section 3: Normal Text Section */}
       <section className="section-3">
         <div className="section-3-content">
-          <h3>Online Store</h3>
-          <h2>Discover Sweet Delicious</h2>
+          <h3>Unleash your creativity with color and flavor! </h3>
+          <h2>Events & Experiences</h2>
         </div>
       </section>
 

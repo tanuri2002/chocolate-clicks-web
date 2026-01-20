@@ -102,7 +102,7 @@
   padding: 250px 100px;
   position: relative;
   width: 100vw;
-  height: 800px;
+  height: 00px;
   left: 50%;
   right: 50%;
   margin-left: -50vw;
@@ -126,11 +126,15 @@
 }
 
 .text-block h2 {
-  font-family: "Kalnia", serif;
+  font-family: "Kalnia";
   font-size: 2.5rem;
   color: #fff;
   margin: 0 0 10px 0;
   line-height: 1.2;
+  font-weight: 500;
+  transition: 1s all;
+  transition-duration: 1s;
+
 }
 
 .text-block p {
@@ -214,7 +218,7 @@
 }
 
 .section-3-content h3 {
-  font-family: "Beau Rivage", cursive;
+  font-family: "Lexend Exa", sans-serif;
   font-size: 1.2rem;
   color: #c98b3b;
   margin: 0 0 20px 0;
@@ -222,11 +226,12 @@
 }
 
 .section-3-content h2 {
-  font-family: "Kalnia", serif;
+  font-family: "Kalnia";
   font-size: 3rem;
   color: #fff;
   margin: 0;
   line-height: 1.2;
+  font-weight: 500;
 }
 
 /* ==================== SECTION 4: Two Column Gallery ==================== */
