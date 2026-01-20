@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chocolate Clicks</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      color: #333;
+    }
+
+    /* === HERO SECTION === */
+    .hero {
+      position: relative;               /* Important: makes absolute children position relative to this */
+      height: 80vh;                     /* or 500px – adjust as you like */
+      min-height: 500px;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),  /* dark overlay for readability */
+                  url('/src/assets/login.jpeg') center/cover no-repeat;
+      /* You can replace the url with your own main background image.
+         Or use multiple images with grid (see alternative below) */
+      
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      padding: 20px;
+      z-index: 2;                       /* Ensures it's above any pseudo-elements if used */
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.7); /* Helps text stand out */
+    }
+
+    .hero p {
+      font-size: 1.4rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero .btn {
+      display: inline-block;
+      background: #c0392b;
+      color: white;
+      padding: 14px 32px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .hero .btn:hover {
+      background: #e74c3c;
+    }
+
+    /* === Product Sections (Cakes, Cupcakes, Brownies) === */
+    .products {
+      padding: 60px 20px;
+      background: #1a1a1a;
+      color: white;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #e67e22;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #2c2c2c;
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .card h3 {
+      padding: 15px;
+      font-size: 1.4rem;
+    }
+
+    .more-btn {
+      display: block;
+      margin: 20px auto;
+      background: #c0392b;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero / Top banner with overlay text -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Sweeten Your Day with Chocolate Clicks!</h1>
+      <p>Explore our freshly baked delights — from cakes to brownies, each made with love and premium chocolate.</p>
+      <a href="#products" class="btn">Shop Now</a>
+    </div>
+  </section>
+
+  <!-- Rest of your page -->
+  <section class="products" id="products">
+    <h2 class="section-title">Cakes</h2>
+    <div class="grid">
+      <div class="card">
+        <img src="/src/assets/login.jpeg" alt="Luxury chocolate cake">
+        <h3>Luxury Chocolate Cake</h3>
+      </div>
+      <div class="card">
+        <img src="/src/assets/login.jpeg" alt="Berry cake">
+        <h3>Berry Bliss Cake</h3>
+      </div>
+      <div class="card">
+        <img src="/src/assets/login.jpeg" alt="Wedding cake">
+        <h3>Custom Wedding Cake</h3>
+      </div>
+    </div>
+    <button class="more-btn">See More Cakes →</button>
+
+    <!-- Repeat similar blocks for Cupcakes and Brownies -->
+  </section>
+
+</body>
+</html>
