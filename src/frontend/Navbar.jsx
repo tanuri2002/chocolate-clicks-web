@@ -1,12 +1,18 @@
+// src/frontend/Navbar.jsx
+import React from 'react';
+import './Navbar.css';
+
 export default function Navbar() {
   return (
-    <nav className="h-15 flex-shrink-0 border-b border-gray-800 flex items-center justify-between px-6 md:px-10" style={{ fontFamily: 'Kalnia', backgroundColor: '#2a1810', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, width: '100%' }}>
-      <div className="text-2xl font-semibold text-white">Home</div>
-      <div className="flex gap-6 md:gap-8 text-white text-sm md:text-base">
-        <a href="/" className="hover:text-orange-900 transition">Home</a>
-        <a href="/login" className="hover:text-orange-900 transition">Log in</a>
-        <a href="/signup" className="hover:text-orange-900 transition">Sign up</a>
-        <a href="/events" className="hover:text-orange-900 transition">Events</a>
+    <nav className="navbar">
+      <div className="navbar-logo">Chocolate Clicks</div>
+      <div className="navbar-links">
+        <a href="/">Home</a>
+        <a href="/login">Log in</a>
+        <a href="/signup">Sign up</a>
+        <a href="/events">Items</a>
+        <a href="/payment">Payment</a>
+        <a href="/dashboard">Dashboard</a>
       </div>
     </nav>
   );

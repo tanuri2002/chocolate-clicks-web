@@ -1,0 +1,396 @@
+/* Hero full page */
+
+.hero {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #0f0f0f;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding-bottom: 100px;
+}
+
+/* Background image */
+.hero-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Dark overlay */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}
+
+/* Text on image */
+.hero-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  color: #ddd;
+}
+
+.hero-text h1 {
+  font-family: "Kalnia", serif;
+  font-size: 3rem;
+  font-weight: 500;
+}
+
+.hero-text p {
+  font-family: "Beau Rivage", cursive;
+  font-size: 1.6rem;
+  color: #c98b3b;
+  margin-top: 12px;
+}
+
+/* Uneven bottom wave */
+.hero-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  z-index: 4;
+  display: block;
+}
+
+/* Logo circle */
+.logo-wrapper {
+  position: absolute;
+  bottom: -70px; /* adjust to sit slightly outside hero */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  border: 3px solid #fff;
+}
+
+.logo-wrapper img {
+  width: 90%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ==================== SECTION 1: Clashed Image ==================== */
+.section-1 {
+  background-color: #0f0f0f;
+  padding: 250px 100px;
+  position: relative;
+  width: 100vw;
+  height: 800px;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
+}
+
+.section-content {
+  width: 100%;
+  display: flex;
+  gap: 0;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.text-block {
+  flex: 1;
+  padding: 0 40px;
+  text-align: center;
+}
+
+.text-block h2 {
+  font-family: "Kalnia", serif;
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+  line-height: 1.2;
+}
+
+.text-block p {
+  font-family: "Beau Rivage", cursive;
+  font-size: 1.4rem;
+  color: #c98b3b;
+  margin: 0;
+}
+
+.clashed-image-container {
+  display: none;
+}
+
+.clashed-image {
+  display: none;
+}
+
+/* ==================== SECTION 2: Text on Image ==================== */
+.section-2 {
+  position: relative;
+  width: 100vw;
+  height: 800px;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
+}
+
+.section-2-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.section-2-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 2;
+}
+
+.section-2-overlay h2 {
+  font-family: "Kalnia", serif;
+  font-size: 3rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+}
+
+.section-2-overlay p {
+  font-family: "Beau Rivage", cursive;
+  font-size: 1.5rem;
+  color: #c98b3b;
+  margin: 0;
+}
+
+/* ==================== SECTION 3: Normal Text Section ==================== */
+.section-3 {
+  background-color: #0f0f0f;
+  padding: 80px 20px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.section-3-content {
+  text-align: center;
+  padding: 0 40px;
+}
+
+.section-3-content h3 {
+  font-family: "Beau Rivage", cursive;
+  font-size: 1.2rem;
+  color: #c98b3b;
+  margin: 0 0 20px 0;
+  letter-spacing: 2px;
+}
+
+.section-3-content h2 {
+  font-family: "Kalnia", serif;
+  font-size: 3rem;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* ==================== SECTION 4: Two Column Gallery ==================== */
+.section-4 {
+  background-color: #0f0f0f;
+  padding: 80px 20px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.gallery-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.gallery-item {
+  position: relative;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+}
+
+.overlay-top {
+  top: 0;
+}
+
+.overlay-bottom {
+  bottom: 0;
+}
+
+.overlay h3 {
+  font-family: "Kalnia", serif;
+  font-size: 2rem;
+  color: #fff;
+  margin: 0 0 10px 0;
+}
+
+.overlay p {
+  font-family: "Beau Rivage", cursive;
+  font-size: 1.1rem;
+  color: #c98b3b;
+  margin: 0;
+  padding: 0 20px;
+}
+
+.section-5 {
+  background-color: #0f0f0f;
+  padding: 0px 20px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  height: auto;
+  margin-bottom: 0;
+}
+
+.gallery-containersection5 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: auto;
+}
+
+.gallery-itemleftpara {
+  position: relative;
+  height: 1000px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  padding: 20px;
+  font-family: "Kalnia", serif;
+  font-size: 2rem;
+  font-weight: lighter;
+}
+.gallery-item.bigleft {
+  position: relative;
+  height: 1000px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+.gallery-item.bigright {
+  position: relative;
+  height: 1000px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .section-content {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .clashed-image-container {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .gallery-container {
+    grid-template-columns: 1fr;
+  }
+
+  .section-2 {
+    height: 300px;
+  }
+
+  .section-2-overlay h2 {
+    font-size: 2rem;
+  }
+
+  .text-block h2 {
+    font-size: 1.8rem;
+  }
+
+  .section-3-content h2 {
+    font-size: 2rem;
+  }
+}

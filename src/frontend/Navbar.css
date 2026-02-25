@@ -1,0 +1,45 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  height: 60px; /* Approx h-15 in Tailwind */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem; /* md:px-10 */
+  background-color: #2a1810;
+  border-bottom: 1px solid #1f1f1f; /* border-gray-800 */
+  font-family: 'Kalnia', sans-serif;
+}
+
+.navbar-logo {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem; /* default gap */
+  font-size: 0.875rem; /* text-sm */
+}
+
+@media (min-width: 768px) {
+  .navbar-links {
+    gap: 2rem; /* md:gap-8 */
+    font-size: 1rem; /* md:text-base */
+  }
+}
+
+.navbar-links a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.navbar-links a:hover {
+  color: #b45309; /* hover:text-orange-900 */
+}

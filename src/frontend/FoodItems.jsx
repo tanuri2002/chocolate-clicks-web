@@ -1,128 +1,100 @@
+import React from 'react';
 import login from '../assets/login.jpeg';
+import cake from '../assets/cake.jpeg';
+import cake2 from '../assets/cake2.jpeg';
+import cake3 from '../assets/cake3.jpeg';
+import './FoodItems.css';
 
 export default function FoodItems() {
   const cakes = [
-    { id: 1, name: 'Luxury Chocolate Cake', image: login },
-    { id: 2, name: 'Berry Bliss Cake', image: login },
-    { id: 3, name: 'Custom Wedding Cake', image: login },
+    { id: 1, name: 'Luxury Chocolate Cake', image: cake },
+    { id: 2, name: 'Berry Bliss Cake', image: cake2 },
+    { id: 3, name: 'Custom Wedding Cake', image: cake3 },
   ];
 
   const cupcakes = [
-    { id: 4, name: 'Classic Vanilla Cupcake', image: login },
-    { id: 5, name: 'Chocolate Delight Cupcake', image: login },
-    { id: 6, name: 'Red Velvet Cupcake', image: login },
+    { id: 4, name: 'Classic Vanilla Cupcake', image: cake2 },
+    { id: 5, name: 'Chocolate Delight Cupcake', image: cake3 },
+    { id: 6, name: 'Red Velvet Cupcake', image: cake },
   ];
 
   const brownies = [
-    { id: 7, name: 'Fudgy Brownie', image: login },
-    { id: 8, name: "S'mores Brownie", image: login },
-    { id: 9, name: 'Espresso Brownie', image: login },
+    { id: 7, name: 'Fudgy Brownie', image: cake },
+    { id: 8, name: "S'mores Brownie", image: cake2 },
+    { id: 9, name: 'Espresso Brownie', image: cake3 },
   ];
 
   return (
-    <div className="bg-gray-950 text-white min-h-screen pt-16">
-      <div
+    <div className="food-page">
+      {/* Hero Section */}
+      <section
+        className="food-hero"
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${login}')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          backgroundRepeat: 'no-repeat',
         }}
       >
-        {/* Hero Section */}
-        <section className="h-screen flex items-center justify-center text-center relative">
-          <div className="max-w-2xl px-6 z-10">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: 'Kalnia' }}>
-              Sweeten Your Day with Chocolate Clicks!
-            </h1>
-            <p className="text-xl md:text-2xl mb-8">
-              Explore our freshly baked delights — from cakes to brownies, each made with love and premium chocolate.
-            </p>
-            <a
-              href="#products"
-              className="inline-block bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-8 rounded-full transition duration-300"
-            >
-              Shop Now
-            </a>
-          </div>
-        </section>
+        <div className="food-hero-content">
+          <h1>Sweeten Your Day with Chocolate Clicks!</h1>
+          <p>
+            Explore our freshly baked delights — from cakes to brownies, each made with love and premium chocolate.
+          </p>
+          <a href="#products" className="hero-button">Shop Now</a>
+        </div>
+      </section>
 
-        {/* Products Section */}
-        <section id="products" className="py-20 px-6">
-          {/* Cakes */}
-          <div className="max-w-6xl mx-auto mb-40 pb-20" style={{ borderBottom: '2px solid rgba(42, 24, 16, 0.8)' }}>
-            <h2 className="text-4xl font-bold text-center text-orange-500 mb-12" style={{ fontFamily: 'Kalnia' }}>
-              Cakes
-            </h2>
-            <p className="text-gray-300 text-lg mb-12 max-w-2xl">
-              Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {cakes.map((cake) => (
-                <div
-                  key={cake.id}
-                  className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:translate-y-[-10px] transition duration-300 cursor-pointer"
-                >
-                  <img src={cake.image} alt={cake.name} className="w-full h-64 object-cover" />
-                  <h3 className="text-xl font-semibold p-4 text-center" style={{ fontFamily: 'Kalnia' }}>{cake.name}</h3>
-                </div>
-              ))}
-            </div>
-            <button className="block mx-auto mt-8 bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-full transition">
-              See More Cakes →
-            </button>
+      {/* Products Section */}
+      <section id="products" className="food-products">
+        {/* Cakes */}
+        <div className="product-category">
+          <h2>Cakes...</h2>
+          <p>
+            Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.
+          </p>
+          <div className="product-grid">
+            {cakes.map((cake) => (
+              <div key={cake.id} className="product-card">
+                <img src={cake.image} alt={cake.name} />
+                <h3>{cake.name}</h3>
+              </div>
+            ))}
           </div>
+          <button className="product-button">See More Cakes →</button>
+        </div>
 
-          {/* Cupcakes */}
-          <div className="max-w-6xl mx-auto mb-40 pb-20" style={{ borderBottom: '2px solid rgba(42, 24, 16, 0.8)' }}>
-            <h2 className="text-4xl font-bold text-center text-orange-500 mb-12" style={{ fontFamily: 'Kalnia' }}>
-              Cupcakes
-            </h2>
-            <p className="text-gray-300 text-lg mb-12 max-w-2xl">
-              Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {cupcakes.map((cupcake) => (
-                <div
-                  key={cupcake.id}
-                  className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:translate-y-[-10px] transition duration-300 cursor-pointer"
-                >
-                  <img src={cupcake.image} alt={cupcake.name} className="w-full h-64 object-cover" />
-                  <h3 className="text-xl font-semibold p-4 text-center" style={{ fontFamily: 'Kalnia' }}>{cupcake.name}</h3>
-                </div>
-              ))}
-            </div>
-            <button className="block mx-auto mt-8 bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-full transition">
-              See More Cupcakes →
-            </button>
+        {/* Cupcakes */}
+        <div className="product-category">
+          <h2>Cupcakes...</h2>
+          <p>
+            Celebrate every occasion with our beautifully crafted cupcakes — from birthdays to weddings, made in your favorite flavors and designs.
+          </p>
+          <div className="product-grid">
+            {cupcakes.map((cupcake) => (
+              <div key={cupcake.id} className="product-card">
+                <img src={cupcake.image} alt={cupcake.name} />
+                <h3>{cupcake.name}</h3>
+              </div>
+            ))}
           </div>
+          <button className="product-button">See More Cupcakes →</button>
+        </div>
 
-          {/* Brownies */}
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center text-orange-500 mb-12" style={{ fontFamily: 'Kalnia' }}>
-              Brownies
-            </h2>
-            <p className="text-gray-300 text-lg mb-12 max-w-2xl">
-              Celebrate every occasion with our beautifully crafted cakes — from birthdays to weddings, made in your favorite flavors and designs.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {brownies.map((brownie) => (
-                <div
-                  key={brownie.id}
-                  className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:translate-y-[-10px] transition duration-300 cursor-pointer"
-                >
-                  <img src={brownie.image} alt={brownie.name} className="w-full h-64 object-cover" />
-                  <h3 className="text-xl font-semibold p-4 text-center" style={{ fontFamily: 'Kalnia' }}>{brownie.name}</h3>
-                </div>
-              ))}
-            </div>
-            <button className="block mx-auto mt-8 bg-red-700 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-full transition">
-              See More Brownies →
-            </button>
+        {/* Brownies */}
+        <div className="product-category">
+          <h2>Brownies...</h2>
+          <p>
+            Celebrate every occasion with our beautifully crafted brownies — from birthdays to weddings, made in your favorite flavors and designs.
+          </p>
+          <div className="product-grid">
+            {brownies.map((brownie) => (
+              <div key={brownie.id} className="product-card">
+                <img src={brownie.image} alt={brownie.name} />
+                <h3>{brownie.name}</h3>
+              </div>
+            ))}
           </div>
-        </section>
-      </div>
+          <button className="product-button">See More Brownies →</button>
+        </div>
+      </section>
     </div>
   );
 }
