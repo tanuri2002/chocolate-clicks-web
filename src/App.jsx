@@ -1,17 +1,40 @@
 import './App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Home from './assets/frontend/Home'
-import Payment from './assets/frontend/Payment'
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./frontend/Navbar";
+import Footer from "./frontend/Footer";
+import Home from "./frontend/Home";
+import Login from "./frontend/Login";
+import SignUp from "./frontend/SignUp";
+import Payment from "./frontend/Payment";
+import Dashboard from './frontend/Dashboard';
+import FoodItems from "./frontend/FoodItems";
+
+// Your original components (preserved)
+import YourHome from './assets/frontend/Home'
+import YourPayment from './assets/frontend/Payment'
 
 function App() {
   return (
-    <Router>
+    <>
+      <Navbar />
+
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/food" element={<FoodItems />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/events" element={<FoodItems />} />
+        
+        {/* Your original routes preserved with /my prefix */}
+        <Route path="/my-home" element={<YourHome />} />
+        <Route path="/my-payment" element={<YourPayment />} />
       </Routes>
-    </Router>
-  )
+
+      <Footer />
+    </>
+  );
 }
 
-export default App
+export default App;

@@ -1,0 +1,145 @@
+/* Base page */
+.food-page {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  color: white;
+  font-family: 'Kalnia', sans-serif;
+}
+
+/* Hero Section */
+.food-hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.food-hero-content {
+  max-width: 40rem;
+  padding: 0 1.5rem;
+  z-index: 10;
+}
+
+.food-hero h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .food-hero h1 {
+    font-size: 4rem;
+  }
+}
+
+.food-hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.hero-button {
+  display: inline-block;
+  background-color: #ffffff;
+  color: rgb(44, 7, 7);
+  font-weight: bold;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.hero-button:hover {
+  background-color: #7f1d1d;
+}
+
+/* Products Section */
+.food-products {
+  padding: 5rem 1.5rem;
+}
+
+/* Each Category */
+.product-category {
+  max-width: 72rem;
+  margin: 0 auto 5rem auto;
+  padding-bottom: 5rem;
+  border-bottom: 2px solid rgba(42, 24, 16, 0.8);
+}
+
+.product-category h2 {
+  font-size: 2.25rem;
+  text-align:left;
+  color: white;
+  margin-bottom: 3rem;
+}
+
+.product-category p {
+  text-align: left;
+  color: #d1d5db;
+  font-size: 1.125rem;
+  margin-bottom: 3rem;
+  max-width: 40rem;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Grid of products */
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Product Card */
+.product-card {
+  background-color: #1a1a1a;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.product-card:hover {
+  transform: translateY(-10px);
+}
+
+.product-card img {
+  width: 100%;
+  height: 16rem;
+  object-fit: cover;
+}
+
+.product-card h3 {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+/* Buttons */
+.product-button {
+  display: block;
+  margin: 2rem auto 0 auto;
+  background-color: white;
+  color: #b91c1c;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.product-button:hover {
+  background-color: #7f1d1d;
+}

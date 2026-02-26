@@ -1,0 +1,746 @@
+/* ==================== PAYMENT PAGE STYLES ==================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.payment-container {
+  background: linear-gradient(135deg, #100f0e 0%, #1a1a1a 100%);
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: "Poppins", "Inter", sans-serif;
+  color: #333;
+}
+
+/* ==================== HEADER SECTION ==================== */
+.payment-header {
+  max-width: 1400px;
+  margin: 0 auto 40px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 245, 0.9) 100%);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #c98b3b;
+}
+
+.logo-section h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #100f0e;
+  letter-spacing: 0.5px;
+}
+
+.page-title {
+  font-size: 28px;
+  color: #100f0e;
+  font-weight: 600;
+}
+
+/* ==================== STEP INDICATOR ==================== */
+.steps-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e8e8e8;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.step p {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+}
+
+.step.completed .step-number {
+  background: #c98b3b;
+  color: white;
+}
+
+.step.completed p {
+  color: #c98b3b;
+}
+
+.step.active .step-number {
+  background: #100f0e;
+  color: white;
+  box-shadow: 0 0 0 3px rgba(16, 15, 14, 0.1);
+}
+
+.step.active p {
+  color: #100f0e;
+  font-weight: 600;
+}
+
+.step-line {
+  width: 30px;
+  height: 2px;
+  background: #e8e8e8;
+}
+
+.step.completed ~ .step-line {
+  background: #c98b3b;
+}
+
+/* ==================== MAIN CONTENT LAYOUT ==================== */
+.payment-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 30px;
+}
+
+.payment-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ==================== PAYMENT SECTION ==================== */
+.payment-section {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.payment-section:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #100f0e;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::before {
+  content: "";
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #c98b3b, #d4a574);
+  border-radius: 2px;
+}
+
+/* ==================== PAYMENT METHODS ==================== */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.payment-method-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.payment-method-card:hover {
+  border-color: #c98b3b;
+  background: #fff9f5;
+}
+
+.payment-method-card.active {
+  border-color: #100f0e;
+  background: linear-gradient(135deg, rgba(16, 15, 14, 0.03), rgba(201, 139, 59, 0.05));
+  box-shadow: 0 4px 12px rgba(16, 15, 14, 0.1);
+}
+
+.method-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.method-header input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #100f0e;
+}
+
+.method-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #100f0e;
+  margin-bottom: 4px;
+}
+
+.method-info p {
+  font-size: 13px;
+  color: #999;
+}
+.card-icons,
+.icon {
+  font-size: 24px;
+  display: flex;
+  gap: 8px;
+}
+
+/* ==================== CARD DETAILS FORM ==================== */
+.card-details-section {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-form,
+.billing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #100f0e;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #100f0e;
+  box-shadow: 0 0 0 3px rgba(16, 15, 14, 0.1);
+  background: #fff;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #ccc;
+}
+
+/* ==================== CARD TYPE SELECTION ==================== */
+.card-type-selection {
+  margin-bottom: 25px;
+}
+
+.card-type-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #100f0e;
+  margin-bottom: 12px;
+}
+
+.card-types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.card-type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 12px;
+  border: 2px solid #e8e8e8;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  text-align: center;
+}
+
+.card-type-option:hover {
+  border-color: #c98b3b;
+  background: #fff9f5;
+  transform: translateY(-2px);
+}
+
+.card-type-option.active {
+  border-color: #100f0e;
+  background: linear-gradient(135deg, rgba(16, 15, 14, 0.05), rgba(201, 139, 59, 0.05));
+  box-shadow: 0 4px 12px rgba(16, 15, 14, 0.15);
+}
+
+.card-type-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #100f0e;
+}
+
+.card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #100f0e;
+}
+
+.card-type-option.active .card-name {
+  color: #c98b3b;
+  font-weight: 700;
+}
+
+/* ==================== SECURITY NOTE ==================== */
+.security-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(16, 15, 14, 0.05), rgba(201, 139, 59, 0.05));
+  border-left: 4px solid #100f0e;
+  border-radius: 8px;
+}
+
+.lock-icon {
+  font-size: 20px;
+}
+
+.security-note p {
+  font-size: 14px;
+  color: #100f0e;
+  font-weight: 500;
+}
+
+/* ==================== ORDER SUMMARY PANEL ==================== */
+.order-summary-panel {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.order-summary-panel h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #100f0e;
+  margin-bottom: 20px;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.order-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.order-item img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-details h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #100f0e;
+  margin-bottom: 4px;
+}
+
+.item-details .quantity {
+  font-size: 12px;
+  color: #999;
+}
+
+.item-price {
+  font-weight: 600;
+  color: #c98b3b;
+  font-size: 14px;
+}
+
+.summary-divider {
+  height: 1px;
+  background: #e8e8e8;
+  margin: 15px 0;
+}
+
+.summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+}
+
+.summary-row span:last-child {
+  font-weight: 500;
+  color: #333;
+}
+
+.summary-row.discount {
+  color: #c98b3b;
+}
+
+.summary-row.discount span:last-child {
+  color: #c98b3b;
+  font-weight: 600;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.summary-total span:first-child {
+  font-size: 16px;
+  font-weight: 600;
+  color: #100f0e;
+}
+
+.total-amount {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #c98b3b, #d4a574);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==================== ACTION BUTTONS ==================== */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #100f0e, #2a2a2a);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 15, 14, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 15, 14, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #100f0e;
+  border: 2px solid #e8e8e8;
+}
+
+.btn-secondary:hover {
+  border-color: #100f0e;
+  background: #fafafa;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 1024px) {
+  .payment-main {
+    grid-template-columns: 1fr;
+  }
+
+  .order-summary-panel {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-container {
+    padding: 20px 15px;
+  }
+
+  .payment-header {
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .logo-section {
+    width: 100%;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .steps-indicator {
+    gap: 10px;
+  }
+
+  .step-line {
+    width: 20px;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .step p {
+    font-size: 11px;
+  }
+
+  .payment-section {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .payment-method-card {
+    padding: 15px;
+  }
+
+  .method-info h4 {
+    font-size: 15px;
+  }
+
+  .method-info p {
+    font-size: 12px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .card-types {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .order-summary-panel {
+    padding: 20px;
+  }
+
+  .order-summary-panel h3 {
+    font-size: 18px;
+  }
+
+  .order-item {
+    gap: 10px;
+  }
+
+  .order-item img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .item-details h4 {
+    font-size: 13px;
+  }
+
+  .total-amount {
+    font-size: 24px !important;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-header {
+    padding: 15px;
+  }
+
+  .logo-section h1 {
+    font-size: 20px;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .steps-indicator {
+    gap: 5px;
+  }
+
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .step-line {
+    width: 10px;
+  }
+
+  .step p {
+    font-size: 10px;
+  }
+
+  .payment-method-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .method-header {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .card-icons,
+  .icon {
+    margin-top: 10px;
+  }
+
+  .card-types {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .card-type-option {
+    padding: 12px 8px;
+  }
+
+  .card-name {
+    font-size: 12px;
+  }
+
+  .order-item {
+    gap: 8px;
+  }
+
+  .order-item img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .summary-row {
+    font-size: 13px;
+  }
+
+  .total-amount {
+    font-size: 22px !important;
+  }
+}
