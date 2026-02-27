@@ -1,5 +1,6 @@
 // src/frontend/Navbar.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -7,12 +8,12 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-logo">Chocolate Clicks</div>
       <div className="navbar-links">
-        <a href="/">Home</a>
-        <a href="/login">Log in</a>
-        <a href="/signup">Sign up</a>
-        <a href="/events">Items</a>
-        <a href="/payment">Payment</a>
-        <a href="/dashboard">Dashboard</a>
+        <Link to="/">Home</Link>
+        <Link to="/events">Our-Items</Link>
+        <Link to="/payment">Payments</Link>
+        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/login">Log in</Link>
+        {/* <Link to="/signup">Sign up</Link> */}
       </div>
     </nav>
   );

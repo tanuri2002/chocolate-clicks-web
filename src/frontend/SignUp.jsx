@@ -1,56 +1,92 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import signup from '../assets/signup.jpeg';
 import './SignUp.css';
 
 export default function SignUp() {
+  const [form, setForm] = useState({ firstName: '', lastName: '', contactNumber: '', email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const navigate = useNavigate();
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch('http://localhost:5000/api/users/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Signup failed');
+      setSuccess('Signup successful');
+      setForm({ firstName: '', lastName: '', contactNumber: '', email: '', password: '' });
+      setTimeout(() => navigate('/login'), 800);
+    } catch (err) {
+      setError(err.message || 'Server error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="signup-page">
-      {/* Main content – side by side on large screens */}
       <div className="signup-container">
-        {/* Left: Image – hidden on mobile, shown from lg breakpoint */}
         <div className="signup-image">
-          <img
-            src={signup}
-            alt="Tray of gooey S'mores brownies with toasted marshmallows"
-          />
+          <img src={signup} alt="Tray of gooey S'mores brownies with toasted marshmallows" />
         </div>
 
-        {/* Right: Form – always visible, vertically centered */}
         <div className="signup-form-container">
           <div className="signup-form-wrapper">
-            <h1 className="signup-title">
-              Welcome to Chocolate Clicks!
-            </h1>
+            <h1 className="signup-title">Welcome to Chocolate Clicks!</h1>
 
-            <form className="signup-form">
+            <form className="signup-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <input id="firstName" type="text" required placeholder="First Name" />
+                <input name="firstName" value={form.firstName} onChange={handleChange} type="text" required placeholder="First Name" />
               </div>
 
               <div className="form-group">
-                <input id="lastName" type="text" required placeholder="Last Name" />
+                <input name="lastName" value={form.lastName} onChange={handleChange} type="text" required placeholder="Last Name" />
               </div>
 
               <div className="form-group">
-                <input id="contactNumber" type="tel" required placeholder="Contact Number" />
+                <input name="contactNumber" value={form.contactNumber} onChange={handleChange} type="tel" placeholder="Contact Number" />
               </div>
 
               <div className="form-group">
-                <input id="email" type="email" required placeholder="Email" />
+                <input name="email" value={form.email} onChange={handleChange} type="email" required placeholder="Email" />
               </div>
 
               <div className="form-group">
-                <input id="password" type="password" required placeholder="Password" />
+                <input name="password" value={form.password} onChange={handleChange} type="password" required placeholder="Password" />
               </div>
 
-              <button type="submit" className="signup-button">
-                Sign Up
+              <button type="submit" className="signup-button" disabled={loading}>
+                {loading ? 'Signing...' : 'Sign Up'}
               </button>
             </form>
 
+            {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
+            {success && <p style={{ color: 'lightgreen', textAlign: 'center' }}>{success}</p>}
+
             <p className="signup-footer">
-              Have an Account?{' '}
-              <a href="/login">Log In</a>
+              Have an Account? <Link to="/login">Log In</Link>
             </p>
           </div>
         </div>

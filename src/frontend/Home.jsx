@@ -165,14 +165,14 @@ export default function Home() {
       <section className="section-5">
         <div className="gallery-containersection5">
           {/* Left Image */}
-          <div className="gallery-item bigleft">
-            <img src="\front_img\big-left1.jpeg" alt="big-left" />
+            <div className="gallery-item bigleft">
+              <img src="/front_img/big-left1.jpeg" alt="big-left" />
           </div>
 
           {/* Right Image */}
           <div className="gallery-item bigright">
-            <img src="\front_img\Big-picR.jpeg" alt="big-right" />
-            
+            <img src="/front_img/Big-picR.jpeg" alt="big-right" />
+
           </div>
         </div>
       </section>
@@ -188,8 +188,8 @@ export default function Home() {
 
           {/* Right Image */}
           <div className="gallery-item bigright">
-            <img src="\front_img\solo-right.jpeg" alt="big-right" />
-            
+            <img src="/front_img/solo-right.jpeg" alt="big-right" />
+
           </div>
         </div>
       </section>
@@ -199,7 +199,7 @@ export default function Home() {
         <div className="gallery-containersection5">
           {/* Left Image */}
           <div className="gallery-item bigleft">
-            <img src="\front_img\solo-left.jpeg" alt="big-left" />
+            <img src="/front_img/solo-left.jpeg" alt="big-left" />
           </div>
 
           {/* Right Image */}
