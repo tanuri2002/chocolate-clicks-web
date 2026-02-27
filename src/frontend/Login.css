@@ -1,12 +1,11 @@
 /* Base page */
 .login-page {
-  min-height:50vh;
+  min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
   background-color: #0a0a0a; /* Tailwind dark-950 */
   color: white;
   overflow: hidden;
-  padding-top: 4rem; /* similar to pt-16 */
 }
 
 /* Container: grid layout for large screens */
@@ -22,7 +21,7 @@
   }
 }
 
-/* Left image */
+/* Left image (hidden on small screens, shown on large) */
 .login-image {
   display: none;
   align-items: center;
@@ -39,19 +38,18 @@
 .login-image img {
   width: 100%;
   max-width: 48rem; /* roughly max-w-3xl */
-  height: 100%;
-  /* object-fit: cover; */
-  border-radius:0%; /* rounded-2xl */
+  height: auto;
+  object-fit: cover;
+  border-radius: 1rem; /* rounded-2xl */
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6); /* shadow-2xl shadow-black/60 */
 }
 
 /* Right form */
 .login-form-container {
   display: flex;
-  /* align-items: center; */
+  align-items: center;
   justify-content: center;
   padding: 2rem;
-  margin-top: 10%;
 }
 
 .login-form-wrapper {
@@ -65,7 +63,7 @@
 
 /* Title */
 .login-title {
-  font-size:medium; /* text-4xl */
+  font-size: 2rem; /* text-4xl */
   font-weight: bold;
   text-align: center;
   font-family: 'Kalnia', sans-serif;

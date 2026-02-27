@@ -1,43 +1,18 @@
 // src/pages/Dashboard.jsx
 import React from 'react';
-import { TrendingUp, Users, Package, Percent } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import StatCard from '../frontend/StatCard';
-import StockAlert from '../frontend/StockAlert';
+import { Package, Clock, CheckCircle, Users } from 'lucide-react';
 import './Dashboard.css';
 
-// ─── Example data ────────────────────────────────────────────────
-const monthlySales = [
-  { month: 'Jan', sales: 38000, orders: 420 },
-  { month: 'Feb', sales: 42000, orders: 480 },
-  { month: 'Mar', sales: 38000, orders: 410 },
-  { month: 'Apr', sales: 62000, orders: 680 },
-  { month: 'May', sales: 58000, orders: 640 },
-  { month: 'Jun', sales: 72000, orders: 790 },
-  { month: 'Jul', sales: 68000, orders: 750 },
-  { month: 'Aug', sales: 74000, orders: 810 },
-  { month: 'Sep', sales: 78000, orders: 860 },
-  { month: 'Oct', sales: 82000, orders: 900 },
-  { month: 'Nov', sales: 98000, orders: 1080 },
-  { month: 'Dec', sales: 135000, orders: 1480 },
-];
+// ─── Order Data ────────────────────────────────────────────────
 
-const dailyActivity = [
-  { day: 'Mon', new: 180, active: 1250 },
-  { day: 'Tue', new: 210, active: 1420 },
-  { day: 'Wed', new: 195, active: 1680 },
-  { day: 'Thu', new: 230, active: 1750 },
-  { day: 'Fri', new: 280, active: 1980 },
-  { day: 'Sat', new: 340, active: 2150 },
-  { day: 'Sun', new: 260, active: 1920 },
-];
-
-const stockAlerts = [
-  { name: "Dark Chocolate Truffles", stock: 234, status: "good" },
-  { name: "Milk Chocolate Bar", stock: 45, status: "warning" },
-  { name: "White Chocolate Cookies", stock: 12, status: "danger" },
-  { name: "Chocolate Bonbons", stock: 189, status: "good" },
-  { name: "Cocoa Powder Premium", stock: 67, status: "warning" },
+const registeredCustomers = [
+  { id: 1, name: "Sarah Johnson", email: "sarah@email.com", totalOrders: 5, totalSpent: 449.95, lastPurchase: "2 mins ago", status: "active" },
+  { id: 2, name: "Michael Chen", email: "michael@email.com", totalOrders: 3, totalSpent: 224.97, lastPurchase: "15 mins ago", status: "active" },
+  { id: 3, name: "Emma Williams", email: "emma@email.com", totalOrders: 8, totalSpent: 649.92, lastPurchase: "1 hour ago", status: "active" },
+  { id: 4, name: "David Martinez", email: "david@email.com", totalOrders: 2, totalSpent: 99.98, lastPurchase: "2 hours ago", status: "active" },
+  { id: 5, name: "Lisa Anderson", email: "lisa@email.com", totalOrders: 6, totalSpent: 389.94, lastPurchase: "3 hours ago", status: "inactive" },
+  { id: 6, name: "James Wilson", email: "james@email.com", totalOrders: 1, totalSpent: 89.99, lastPurchase: "1 day ago", status: "inactive" },
+  { id: 7, name: "Maria Garcia", email: "maria@email.com", totalOrders: 4, totalSpent: 299.96, lastPurchase: "2 days ago", status: "inactive" },
 ];
 
 const recentOrders = [
@@ -49,139 +24,216 @@ const recentOrders = [
 ];
 
 export default function Dashboard() {
+  // Calculate order statistics
+  const totalOrders = recentOrders.length;
+  const completedOrders = recentOrders.filter(order => order.status === "Completed").length;
+  const pendingOrders = recentOrders.filter(order => order.status !== "Completed" && order.status !== "Cancelled").length;
+  const cancelledOrders = recentOrders.filter(order => order.status === "Cancelled").length;
+  const totalAmount = recentOrders.reduce((sum, order) => sum + order.amount, 0);
+
+  // Calculate customer statistics
+  const totalCustomers = registeredCustomers.length;
+  const activeCustomers = registeredCustomers.filter(c => c.status === "active").length;
+  const inactiveCustomers = registeredCustomers.filter(c => c.status === "inactive").length;
+  const totalCustomerSpent = registeredCustomers.reduce((sum, c) => sum + c.totalSpent, 0);
+  const avgOrderValue = (totalAmount / totalOrders).toFixed(2);
+
   return (
     <div className="dashboard-page">
       {/* Header */}
       <header className="dashboard-header">
         <div className="dashboard-header-inner">
-          <h1>Admin Dashboard</h1>
-          <div className="dashboard-welcome">Welcome back! Here's your business overview.</div>
+          <h1>Dashboard</h1>
+          <div className="dashboard-welcome">Orders & Customer Management</div>
         </div>
       </header>
 
       <main className="dashboard-main">
-        {/* KPI cards */}
-        <div className="kpi-cards">
-          <StatCard icon={TrendingUp}  title="Total Sales"   value="$127,540" change={12.5}  positive />
-          <StatCard icon={Users}       title="Active Users"  value="8,459"   change={8.2}   positive />
-          <StatCard icon={Package}     title="Total Orders"  value="1,247"   change={15.3}  positive />
-          <StatCard icon={Percent}     title="Conversion Rate" value="3.24%" change={-0.4} positive={false} />
-        </div>
-
-        {/* Charts */}
-        <div className="dashboard-charts">
-          {/* Sales Performance */}
-          <div className="chart-card">
-            <div className="chart-header">
-              <div>
-                <h2><TrendingUp size={18} className="icon-orange"/> Sales Performance</h2>
-                <p>Monthly sales and order trends</p>
+        {/* Order Summary Cards */}
+        <div className="summary-section">
+          <h2 className="section-title">Order Summary</h2>
+          <div className="order-summary-cards">
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#1e40af' }}>
+                <Package size={24} color="white" />
               </div>
-              <div className="chart-toggle">
-                <button>Line</button>
-                <button>Bar</button>
+              <div className="summary-content">
+                <div className="summary-label">Total Orders</div>
+                <div className="summary-value">{totalOrders}</div>
+                <div className="summary-subtitle">All orders combined</div>
               </div>
             </div>
-            <div className="chart-area">
-              <ResponsiveContainer>
-                <AreaChart data={monthlySales}>
-                  <defs>
-                    <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.6}/>
-                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false}/>
-                  <XAxis dataKey="month" stroke="#666"/>
-                  <YAxis stroke="#666"/>
-                  <Tooltip contentStyle={{ background: '#1a1a1a', border: '#333' }}/>
-                  <Area type="monotone" dataKey="sales" stroke="#f59e0b" fill="url(#colorSales)"/>
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
 
-          {/* Customer Activity */}
-          <div className="chart-card">
-            <h2 className="chart-title"><Users size={18} className="icon-orange"/> Customer Activity</h2>
-            <div className="chart-area">
-              <ResponsiveContainer>
-                <AreaChart data={dailyActivity}>
-                  <defs>
-                    <linearGradient id="colorActive" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.5}/>
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorNew" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.6}/>
-                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false}/>
-                  <XAxis dataKey="day" stroke="#666"/>
-                  <YAxis stroke="#666"/>
-                  <Tooltip contentStyle={{ background: '#1a1a1a', border: '#333' }}/>
-                  <Area type="monotone" dataKey="active" stroke="#8b5cf6" fill="url(#colorActive)" name="Active Users"/>
-                  <Area type="monotone" dataKey="new" stroke="#f59e0b" fill="url(#colorNew)" name="New Users" stackId="1"/>
-                </AreaChart>
-              </ResponsiveContainer>
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#16a34a' }}>
+                <CheckCircle size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Completed Orders</div>
+                <div className="summary-value">{completedOrders}</div>
+                <div className="summary-subtitle">Claimed/Delivered</div>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#ea580c' }}>
+                <Clock size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Pending Orders</div>
+                <div className="summary-value">{pendingOrders}</div>
+                <div className="summary-subtitle">Processing or Shipped</div>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#dc2626' }}>
+                <Package size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Cancelled Orders</div>
+                <div className="summary-value">{cancelledOrders}</div>
+                <div className="summary-subtitle">Not completed</div>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#7c3aed' }}>
+                <Package size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Total Revenue</div>
+                <div className="summary-value">${totalAmount.toFixed(2)}</div>
+                <div className="summary-subtitle">From all orders</div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="dashboard-bottom">
-          {/* Stock Alerts & Promotions */}
-          <div className="left-column">
-            {/* Stock Alerts */}
-            <div className="stock-card">
-              <h2><Package size={18} className="icon-orange"/> Stock Alerts</h2>
-              <div className="stock-list">
-                {stockAlerts.map(item => (
-                  <StockAlert key={item.name} {...item}/>
+        {/* Customer Summary Cards */}
+        <div className="summary-section">
+          <h2 className="section-title">Customer Summary</h2>
+          <div className="order-summary-cards">
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#2563eb' }}>
+                <Users size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Total Customers</div>
+                <div className="summary-value">{totalCustomers}</div>
+                <div className="summary-subtitle">Registered users</div>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#10b981' }}>
+                <Users size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Active Customers</div>
+                <div className="summary-value">{activeCustomers}</div>
+                <div className="summary-subtitle">Recently purchased</div>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#6b7280' }}>
+                <Users size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Inactive Customers</div>
+                <div className="summary-value">{inactiveCustomers}</div>
+                <div className="summary-subtitle">No recent purchases</div>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#f59e0b' }}>
+                <Package size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Avg Order Value</div>
+                <div className="summary-value">${avgOrderValue}</div>
+                <div className="summary-subtitle">Per order amount</div>
+              </div>
+            </div>
+
+            <div className="summary-card">
+              <div className="summary-icon" style={{ backgroundColor: '#8b5cf6' }}>
+                <Package size={24} color="white" />
+              </div>
+              <div className="summary-content">
+                <div className="summary-label">Customer Revenue</div>
+                <div className="summary-value">${totalCustomerSpent.toFixed(2)}</div>
+                <div className="summary-subtitle">Total spent</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Registered Customers List */}
+        <div className="customers-card">
+          <div className="customers-header">
+            <h2><Users size={18} className="icon-orange"/> Registered Customers</h2>
+            <button className="view-all-btn">View All</button>
+          </div>
+          <div className="customers-table-wrapper">
+            <table className="customers-table">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Orders</th>
+                  <th>Total Spent</th>
+                  <th>Last Purchase</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {registeredCustomers.map(customer => (
+                  <tr key={customer.id}>
+                    <td>{customer.name}</td>
+                    <td>{customer.email}</td>
+                    <td>{customer.totalOrders}</td>
+                    <td>${customer.totalSpent.toFixed(2)}</td>
+                    <td>{customer.lastPurchase}</td>
+                    <td>
+                      <span className={`customer-status ${customer.status}`}>
+                        {customer.status === 'active' ? '🟢 Active' : '⚫ Inactive'}
+                      </span>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-              <button className="restock-button">Restock Low Items</button>
-            </div>
-
-            {/* Active Promotions */}
-            <div className="promotions-card">
-              <h2>Active Promotions</h2>
-              <div className="promotion-list">
-                <div className="promotion-item">
-                  <span>Holiday Special</span>
-                  <span>+32% • Active</span>
-                </div>
-                <div className="promotion-item">
-                  <span>Milk Sale</span>
-                  <span>+18% • Active</span>
-                </div>
-              </div>
-            </div>
+              </tbody>
+            </table>
           </div>
+        </div>
 
-          {/* Recent Orders */}
-          <div className="recent-orders-card">
-            <div className="recent-orders-header">
-              <h2><Package size={18} className="icon-orange"/> Recent Orders</h2>
-              <button>View All</button>
-            </div>
-            <div className="orders-list">
-              {recentOrders.map(order => (
-                <div key={order.id} className="order-item">
-                  <div>
-                    <div className="order-title">{order.id} • {order.customer}</div>
-                    <div className="order-product">{order.product}</div>
-                  </div>
-                  <div className="order-right">
-                    <div className="order-amount">${order.amount.toFixed(2)}</div>
-                    <span className={`order-status ${order.status.toLowerCase()}`}>
-                      {order.status}
-                    </span>
+        {/* Recent Orders Full Width */}
+        <div className="recent-orders-card">
+          <div className="recent-orders-header">
+            <h2><Package size={18} className="icon-orange"/> Recent Orders</h2>
+            <button className="view-all-btn">View All</button>
+          </div>
+          <div className="orders-list">
+            {recentOrders.map(order => (
+              <div key={order.id} className="order-item">
+                <div>
+                  <div className="order-title">{order.id}</div>
+                  <div className="order-product">{order.customer}</div>
+                  <div className="order-details">
+                    <span>{order.product}</span>
+                    <span className="order-time">{order.time}</span>
                   </div>
                 </div>
-              ))}
-            </div>
+                <div className="order-right">
+                  <div className="order-amount">${order.amount.toFixed(2)}</div>
+                  <span className={`order-status ${order.status.toLowerCase()}`}>
+                    {order.status}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </main>

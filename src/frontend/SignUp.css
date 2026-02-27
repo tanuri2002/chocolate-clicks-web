@@ -1,12 +1,11 @@
 /* Base page */
 .signup-page {
-  min-height: 100vh; /* full viewport height */
+  min-height: calc(100vh - 60px); /* account for fixed navbar */
   display: flex;
   flex-direction: column;
   background-color: #0a0a0a; /* dark-950 */
   color: white;
   overflow: hidden;
-  padding-top: 4rem; /* similar to pt-16 */
 }
 
 /* Container: grid layout for large screens, limited height */
