@@ -42,3 +42,9 @@
 .read-the-docs {
   color: #888;
 }
+
+/* push main content below fixed navbar */
+.app-content {
+  padding-top: 60px;
+  background-color: #0a0a0a;
+}

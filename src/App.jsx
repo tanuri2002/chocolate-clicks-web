@@ -20,7 +20,8 @@ function App() {
     <>
       <Navbar />
 
-      <Routes>
+      <main className="app-content">
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/food" element={<FoodItems />} />
         <Route path="/login" element={<Login />} />
@@ -34,7 +35,8 @@ function App() {
         {/* Your original routes preserved with /my prefix */}
         <Route path="/my-home" element={<YourHome />} />
         <Route path="/my-payment" element={<YourPayment />} />
-      </Routes>
+        </Routes>
+      </main>
 
       <Footer />
     </>

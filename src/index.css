@@ -1,23 +1,29 @@
-@import "tailwindcss";
+@import "tailwindcss/preflight";
+@tailwind utilities;
 
 /* Combined styles from both branches */
 * {
   margin: 0;
   padding: 0;
-  /* box-sizing:border-box; */
 }
 
 html {
   width: 100%;
 }
 
-body {
-  @apply bg-gray-950 text-gray-100 min-h-screen;
-  width: 100%;
-  margin: 0;
-  padding: 0 0 0 0;
-  /* reserve space for fixed navbar (60px height) to avoid content hiding */
-  padding-top: 60px;
+@layer base {
+  body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /* reserve space for fixed navbar (60px height) to avoid content hiding */
+    /* padding-top: 60px; */
+    padding-top: 60px;
+    /* ensure dark background even if Tailwind utilities aren't applied */
+    background-color: #0a0a0a;
+    color: #f3f4f6;
+    min-height: 100vh;
+  }
 }
 
 :root {
