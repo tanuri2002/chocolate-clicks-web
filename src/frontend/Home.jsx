@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Home.css";
 
 export default function Home() {
@@ -74,7 +75,7 @@ export default function Home() {
             <img src="/front_img/l1.jpeg" alt="Brownies" />
             <div className="overlay overlay-top">
               <h3>Brownies</h3>
-              <p>The beautiful frosty days</p>
+              
             </div>
           </div>
 
@@ -82,8 +83,8 @@ export default function Home() {
           <div className="gallery-item right">
             <img src="/front_img/r1.jpeg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>Cake</h3>
-              <p>Joyful moments that deserve extra love</p>
+              <h3>“for the beautiful messy days”</h3>
+              
             </div>
           </div>
         </div>
@@ -93,19 +94,17 @@ export default function Home() {
         <div className="gallery-container">
           {/* Left Image */}
           <div className="gallery-item left">
-            <img src="/front_img/l1.jpeg" alt="Brownies" />
+            <img src="/front_img/cake1.jpeg" alt="Brownies" />
             <div className="overlay overlay-top">
-              <h3>Brownies</h3>
-              <p>The beautiful frosty days</p>
+              <h3>Cake</h3>
             </div>
           </div>
 
           {/* Right Image */}
           <div className="gallery-item right">
-            <img src="/front_img/r1.jpeg" alt="Cake" />
+            <img src="/front_img/cake2.jpeg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>Cake</h3>
-              <p>Joyful moments that deserve extra love</p>
+              <h3>“for moments that deserve extra love”</h3>
             </div>
           </div>
         </div>
@@ -115,19 +114,17 @@ export default function Home() {
         <div className="gallery-container">
           {/* Left Image */}
           <div className="gallery-item left">
-            <img src="/front_img/l1.jpeg" alt="Brownies" />
+            <img src="/front_img/cooki1.jpeg" alt="Brownies" />
             <div className="overlay overlay-top">
-              <h3>Brownies</h3>
-              <p>The beautiful frosty days</p>
+              <h3>Cookies</h3>
             </div>
           </div>
 
           {/* Right Image */}
           <div className="gallery-item right">
-            <img src="/front_img/r1.jpeg" alt="Cake" />
+            <img src="/front_img/cooki2.jpeg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>Cake</h3>
-              <p>Joyful moments that deserve extra love</p>
+              <h3>“tiny circles of comfort”</h3>
             </div>
           </div>
         </div>
@@ -137,23 +134,44 @@ export default function Home() {
         <div className="gallery-container">
           {/* Left Image */}
           <div className="gallery-item left">
-            <img src="/front_img/l1.jpeg" alt="Brownies" />
+            <img src="/front_img/dor2.webp" alt="Brownies" />
             <div className="overlay overlay-top">
-              <h3>Brownies</h3>
-              <p>The beautiful frosty days</p>
+              <h3>Donuts</h3>
             </div>
           </div>
 
           {/* Right Image */}
           <div className="gallery-item right">
-            <img src="/front_img/r1.jpeg" alt="Cake" />
+            <img src="/front_img/dor1.jpg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>Cake</h3>
-              <p>Joyful moments that deserve extra love</p>
+              <h3>“round bites of joy”</h3>
             </div>
           </div>
         </div>
       </section>
+
+
+      {/* Section 4: Two Column Image Gallery */}
+      <section className="section-4">
+        <div className="gallery-container">
+          {/* Left Image */}
+          <div className="gallery-item left">
+            <img src="/front_img/cup1.jpeg" alt="Brownies" />
+            <div className="overlay overlay-top">
+              <h3>Cupcakes</h3>
+            </div>
+          </div>
+
+          {/* Right Image */}
+          <div className="gallery-item right">
+            <img src="/front_img/cup2.jpeg" alt="Cake" />
+            <div className="overlay overlay-bottom">
+              <h3>““tiny treats for big feelings””</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Section 3: Normal Text Section */}
       <section className="section-3">
         <div className="section-3-content">
@@ -209,12 +227,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 3: Normal Text Section */}
+      {/* Section 3: Events & Experiences with Image Grid */}
       <section className="section-3">
-        <div className="section-3-content">
-          <h3>Online Store</h3>
-          <h2>Discover Sweet Delicious</h2>
+        <div className="section-3-wrapper">
+          <div className="section-3-content">
+            <h3>Events & Experiences</h3>
+            <h2>Unleash your creativity with color and flavor!</h2>
+          </div>
+          
+          <div className="section-3-gallery">
+            <div className="gallery-grid">
+              <div className="gallery-item-img top-left">
+                <img src="/front_img/WhatsApp Image 2026-01-20 at 22.29.07.jpeg" alt="Event 1" />
+              </div>
+              <div className="gallery-item-img top-right">
+                <img src="/front_img/WhatsApp Image 2026-01-20 at 22.29.09.jpeg" alt="Event 2" />
+              </div>
+              <div className="gallery-item-img bottom-left">
+                <img src="/front_img/WhatsApp Image 2026-01-20 at 22.31.33.jpeg" alt="Event 3" />
+              </div>
+              <div className="gallery-item-img bottom-right">
+                <img src="/front_img/WhatsApp Image 2026-01-20 at 22.29.28.jpeg" alt="Event 4" />
+              </div>
+            </div>
+          </div>
         </div>
+
+        <Link to="/mask-workshop" className="explore-btn">
+          Explore More..
+        </Link>
       </section>
 
     </>

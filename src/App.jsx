@@ -8,6 +8,7 @@ import SignUp from "./frontend/SignUp";
 import Payment from "./frontend/Payment";
 import Dashboard from './frontend/Dashboard';
 import FoodItems from "./frontend/FoodItems";
+import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
 
 // Your original components (preserved)
@@ -27,6 +28,7 @@ function App() {
         <Route path="/payment" element={<Payment />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/events" element={<FoodItems />} />
+        <Route path="/mask-workshop" element={<MaskWorkshop />} />
         <Route path="/about" element={<About />} />
         
         {/* Your original routes preserved with /my prefix */}
