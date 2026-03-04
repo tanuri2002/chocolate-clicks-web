@@ -1,27 +1,32 @@
 import React from 'react';
 import login from '../assets/login.jpeg';
 import cake from '../assets/cake.jpeg';
-import cake2 from '../assets/cake2.jpeg';
+import cake2 from '../assets/cake2.png';
 import cake3 from '../assets/cake3.jpeg';
+import cookie1 from '../assets/cookie1.jpeg';
+import cookie2 from '../assets/cookie2.jpeg';
+import cookie3 from '../assets/cookie3.jpeg';
+import brownie1 from '../assets/brownie1.png';
+import brownie2 from '../assets/brownie2.jpeg';
+import brownie3 from '../assets/brownie3.jpeg';
 import './FoodItems.css';
 
 export default function FoodItems() {
   const cakes = [
-    { id: 1, name: 'Luxury Chocolate Cake', image: cake },
-    { id: 2, name: 'Berry Bliss Cake', image: cake2 },
-    { id: 3, name: 'Custom Wedding Cake', image: cake3 },
+    { id: 1, name: 'Valentine\'s Berry Bomb', image: cake },
+    { id: 2, name: 'Classic Vanilla Cake with Strawberry Toppings', image: cake2 },
+    { id: 3, name: 'Lemon Blueberry Cake', image: cake3 },
   ];
 
   const cupcakes = [
-    { id: 4, name: 'Classic Vanilla Cupcake', image: cake2 },
-    { id: 5, name: 'Chocolate Delight Cupcake', image: cake3 },
-    { id: 6, name: 'Red Velvet Cupcake', image: cake },
+    { id: 4, name: 'Classic Chocolate Chip Cookies', image: cookie3 },
+    { id: 5, name: 'Red Velvet Cookies', image: cookie2 },
+    { id: 6, name: 'Macha White c/c Cookies', image: cookie1 },
   ];
-
   const brownies = [
-    { id: 7, name: 'Fudgy Brownie', image: cake },
-    { id: 8, name: "S'mores Brownie", image: cake2 },
-    { id: 9, name: 'Espresso Brownie', image: cake3 },
+    { id: 7, name: 'Nutella Topping Brownies', image: brownie1 },
+    { id: 8, name: 'Mashmellow Topping Brownies', image: brownie2 },
+    { id: 9, name: 'Oreo Topping Brownies', image: brownie3 },
   ];
 
   return (
@@ -63,10 +68,9 @@ export default function FoodItems() {
 
         {/* Cupcakes */}
         <div className="product-category">
-          <h2>Cupcakes...</h2>
+          <h2>Cookies...</h2>
           <p>
-            Celebrate every occasion with our beautifully crafted cupcakes — from birthdays to weddings, made in your favorite flavors and designs.
-          </p>
+          Celebrate every moment with our freshly baked cookies — from classic chocolate chip to gourmet delights, crafted with rich flavors and a touch of sweetness in every bite.          </p>
           <div className="product-grid">
             {cupcakes.map((cupcake) => (
               <div key={cupcake.id} className="product-card">
@@ -75,7 +79,7 @@ export default function FoodItems() {
               </div>
             ))}
           </div>
-          <button className="product-button">See More Cupcakes →</button>
+          <button className="product-button">See More Cookies →</button>
         </div>
 
         {/* Brownies */}

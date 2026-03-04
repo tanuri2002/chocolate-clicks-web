@@ -9,6 +9,7 @@ export default function Navbar() {
       <div className="navbar-logo">Chocolate Clicks</div>
       <div className="navbar-links">
         <Link to="/">Home</Link>
+        <Link to="/about">About</Link>
         <Link to="/events">Our-Items</Link>
         <Link to="/payment">Payments</Link>
         <Link to="/dashboard">Dashboard</Link>
