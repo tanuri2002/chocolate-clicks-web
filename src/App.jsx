@@ -10,6 +10,8 @@ import Dashboard from './frontend/Dashboard';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
+import Cakes from './frontend/cakes';
+import ShoppingCart from './frontend/Shoppingcart';
 
 // Your original components (preserved)
 import YourHome from './assets/frontend/Home'
@@ -31,7 +33,9 @@ function App() {
         <Route path="/events" element={<FoodItems />} />
         <Route path="/mask-workshop" element={<MaskWorkshop />} />
         <Route path="/about" element={<About />} />
-        
+        <Route path="/cakes" element={<Cakes />} />
+        <Route path="/cart" element={<ShoppingCart />} />
+
         {/* Your original routes preserved with /my prefix */}
         <Route path="/my-home" element={<YourHome />} />
         <Route path="/my-payment" element={<YourPayment />} />
