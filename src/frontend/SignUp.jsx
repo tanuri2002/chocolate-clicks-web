@@ -4,7 +4,7 @@ import signup from '../assets/signup.jpeg';
 import './SignUp.css';
 
 export default function SignUp() {
-  const [form, setForm] = useState({ firstName: '', lastName: '', contactNumber: '', email: '', password: '' });
+  const [form, setForm] = useState({ fullName: '', email: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -21,23 +21,37 @@ export default function SignUp() {
     setSuccess(null);
     setLoading(true);
 
+    // Validate password match
+    if (form.password !== form.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch('http://localhost:5000/api/users/signup', {
+      const res = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          firstName: form.firstName,
-          lastName: form.lastName,
+          fullName: form.fullName,
           email: form.email,
           password: form.password,
+          confirmPassword: form.confirmPassword,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Signup failed');
-      setSuccess('Signup successful');
-      setForm({ firstName: '', lastName: '', contactNumber: '', email: '', password: '' });
-      setTimeout(() => navigate('/login'), 800);
+      if (!res.ok) throw new Error(data.message || 'Signup failed');
+      
+      // Store JWT token and user info
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      
+      setSuccess('Signup successful! Redirecting...');
+      setForm({ fullName: '', email: '', password: '', confirmPassword: '' });
+      setTimeout(() => navigate('/'), 1000);
     } catch (err) {
       setError(err.message || 'Server error');
     } finally {
@@ -58,15 +72,7 @@ export default function SignUp() {
 
             <form className="signup-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <input name="firstName" value={form.firstName} onChange={handleChange} type="text" required placeholder="First Name" />
-              </div>
-
-              <div className="form-group">
-                <input name="lastName" value={form.lastName} onChange={handleChange} type="text" required placeholder="Last Name" />
-              </div>
-
-              <div className="form-group">
-                <input name="contactNumber" value={form.contactNumber} onChange={handleChange} type="tel" placeholder="Contact Number" />
+                <input name="fullName" value={form.fullName} onChange={handleChange} type="text" required placeholder="Full Name" />
               </div>
 
               <div className="form-group">
@@ -75,6 +81,10 @@ export default function SignUp() {
 
               <div className="form-group">
                 <input name="password" value={form.password} onChange={handleChange} type="password" required placeholder="Password" />
+              </div>
+
+              <div className="form-group">
+                <input name="confirmPassword" value={form.confirmPassword} onChange={handleChange} type="password" required placeholder="Confirm Password" />
               </div>
 
               <button type="submit" className="signup-button" disabled={loading}>
