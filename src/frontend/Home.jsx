@@ -42,7 +42,7 @@ export default function Home() {
         <div className="section-content">
           <div className="text-block">
             <h2>Our patisserie produces</h2>
-            <p>unique sweets for lovers of yummy</p>
+            <p>Unique sweets for lovers of yummy</p>
           </div>
           <div className="clashed-image-container">
             <img src="/front_img/second.jpg" alt="Sweets" className="clashed-image" />
@@ -55,7 +55,7 @@ export default function Home() {
         <img src="/front_img/third.jpg" alt="Products" className="section-2-img" />
         <div className="section-2-overlay">
           <h2>Made with love</h2>
-          <p>unique sweet for gourmet</p>
+          <p>Unique sweet for gourmet</p>
         </div>
       </section>
 
@@ -83,7 +83,7 @@ export default function Home() {
           <div className="gallery-item right">
             <img src="/front_img/r1.jpeg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>“for the beautiful messy days”</h3>
+              <h3>“For the beautiful messy days”</h3>
               
             </div>
           </div>
@@ -104,7 +104,7 @@ export default function Home() {
           <div className="gallery-item right">
             <img src="/front_img/cake2.jpeg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>“for moments that deserve extra love”</h3>
+              <h3>“For moments that deserve extra love”</h3>
             </div>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function Home() {
           <div className="gallery-item right">
             <img src="/front_img/cooki2.jpeg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>“tiny circles of comfort”</h3>
+              <h3>“Tiny circles of comfort”</h3>
             </div>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function Home() {
           <div className="gallery-item left">
             <img src="/front_img/dor2.webp" alt="Brownies" />
             <div className="overlay overlay-top">
-              <h3>Donuts</h3>
+              <h3>Doughnuts</h3>
             </div>
           </div>
 
@@ -144,7 +144,7 @@ export default function Home() {
           <div className="gallery-item right">
             <img src="/front_img/dor1.jpg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>“round bites of joy”</h3>
+              <h3>“Round bites of joy”</h3>
             </div>
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function Home() {
           <div className="gallery-item right">
             <img src="/front_img/cup2.jpeg" alt="Cake" />
             <div className="overlay overlay-bottom">
-              <h3>““tiny treats for big feelings””</h3>
+              <h3>“Tiny treats for bigger feelings”</h3>
             </div>
           </div>
         </div>
@@ -200,7 +200,7 @@ export default function Home() {
         <div className="gallery-containersection5">
           {/* Left para */}
           <div className="gallery-itemleftpara">
-            <p>one bite at a time. Taste our finest cakes and desserts, crafted to delight your senses and make every moment special</p>
+            <p>One bite at a time. Taste our finest cakes and desserts, crafted to delight your senses and make every moment special</p>
 
           </div>
 
