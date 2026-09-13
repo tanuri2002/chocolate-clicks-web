@@ -11,7 +11,7 @@ export default function Navbar() {
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/events">Our-Items</Link>
-        <Link to="/payment">Payments</Link>
+        {/* <Link to="/payment">Payments</Link> */}
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/login">Log in</Link>
         {/* <Link to="/signup">Sign up</Link> */}

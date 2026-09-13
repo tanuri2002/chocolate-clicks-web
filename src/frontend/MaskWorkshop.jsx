@@ -9,7 +9,7 @@ export default function MaskWorkshop() {
           <h1>Wes Mask Painting Workshop</h1>
           <h3>Join us for a Creative &amp; Fun Mask Painting Workshop</h3>
           <p>
-            Paint your own mask unique mask with easy step by step guidance
+            Paint your own unique mask with easy step by step guidance
             <br />
             Sip on your favorite drink &amp; enjoy yummy snacks from Chocolate
             Click
@@ -31,7 +31,8 @@ export default function MaskWorkshop() {
           <img src="/front_img/WhatsApp Image 2026-01-20 at 22.31.31.jpeg" alt="Workshop moment 2" />
           <div className="overlay-copy">
             <p>Witness how history and imagination come alive in every mask.</p>
-          </div>        </div>
+          </div>      
+        </div>
 
         <div className="mask-gallery-card left-col">
           <img src="/front_img/mask1.jpeg" alt="Workshop moment 3" />
@@ -76,7 +77,7 @@ export default function MaskWorkshop() {
           </div>
         </div>
 
-        <h2 className="editions-closing">stay tuned for more<br/>colorful moments<br/>ahead!</h2>
+        <h2 className="editions-closing">Stay tuned for more<br/>colorful moments<br/>ahead!</h2>
       </div>
     </section>
   );

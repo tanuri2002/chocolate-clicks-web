@@ -81,7 +81,7 @@ export default function Home() {
 
           {/* Right Image */}
           <div className="gallery-item right">
-            <img src="/front_img/r1.jpeg" alt="Cake" />
+            <img src="/front_img/r1.jpeg" alt="Cakes" />
             <div className="overlay overlay-bottom">
               <h3>“For the beautiful messy days”</h3>
               
@@ -96,7 +96,7 @@ export default function Home() {
           <div className="gallery-item left">
             <img src="/front_img/cake1.jpeg" alt="Brownies" />
             <div className="overlay overlay-top">
-              <h3>Cake</h3>
+              <h3>Cakes</h3>
             </div>
           </div>
 

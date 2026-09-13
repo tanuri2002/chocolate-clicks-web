@@ -1,37 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./ShoppingCart.css";
 
-export default function ShoppingCart({ onProceedToCheckout, onContinueShopping }) {
-  const [cart, setCart] = useState(() => {
-    try {
-      const raw = localStorage.getItem("cakes_cart");
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem("cakes_cart", JSON.stringify(cart));
-  }, [cart]);
-
-  function changeQty(id, delta) {
-    setCart((prev) => {
-      const copy = { ...prev };
-      if (!copy[id]) return prev;
-      copy[id].qty += delta;
-      if (copy[id].qty <= 0) delete copy[id];
-      return copy;
-    });
-  }
-
-  function removeItem(id) {
-    setCart((prev) => {
-      const copy = { ...prev };
-      delete copy[id];
-      return copy;
-    });
-  }
+export default function ShoppingCart({ cart = {}, onUpdateQty, onRemove }) {
+  const navigate = useNavigate();
 
   const cartItems = Object.values(cart);
   const subtotal = cartItems.reduce((s, it) => s + it.price * it.qty, 0);
@@ -67,14 +39,16 @@ export default function ShoppingCart({ onProceedToCheckout, onContinueShopping }
         <section className="sc-items-section">
           <div className="sc-section-header">
             <h2>Shopping Cart</h2>
-            <span className="sc-item-count">{cartItems.length} item{cartItems.length !== 1 ? "s" : ""}</span>
+            <span className="sc-item-count">
+              {cartItems.length} item{cartItems.length !== 1 ? "s" : ""}
+            </span>
           </div>
 
           {cartItems.length === 0 ? (
             <div className="sc-empty">
               <div className="sc-empty-icon">🛒</div>
               <p>Your cart is empty</p>
-              <button className="sc-continue-btn" onClick={onContinueShopping}>
+              <button className="sc-continue-btn" onClick={() => navigate("/cakes")}>
                 Browse Our Cakes
               </button>
             </div>
@@ -98,7 +72,7 @@ export default function ShoppingCart({ onProceedToCheckout, onContinueShopping }
                       </div>
                       <button
                         className="sc-remove"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => onRemove(item.id)}
                         title="Remove item"
                       >
                         ✕
@@ -106,13 +80,15 @@ export default function ShoppingCart({ onProceedToCheckout, onContinueShopping }
                     </div>
                     <div className="sc-item-bottom">
                       <div className="sc-qty">
-                        <button onClick={() => changeQty(item.id, -1)}>−</button>
+                        <button onClick={() => onUpdateQty(item.id, -1)}>−</button>
                         <span>{item.qty}</span>
-                        <button onClick={() => changeQty(item.id, +1)}>+</button>
+                        <button onClick={() => onUpdateQty(item.id, +1)}>+</button>
                       </div>
                       <div className="sc-item-price">
                         <span className="sc-unit">LKR {item.price.toLocaleString()} each</span>
-                        <span className="sc-total-item">LKR {(item.price * item.qty).toLocaleString()}</span>
+                        <span className="sc-total-item">
+                          LKR {(item.price * item.qty).toLocaleString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -120,7 +96,7 @@ export default function ShoppingCart({ onProceedToCheckout, onContinueShopping }
               ))}
 
               <div className="sc-continue-link">
-                <button onClick={onContinueShopping}>← Continue Shopping</button>
+                <button onClick={() => navigate("/cakes")}>← Continue Shopping</button>
               </div>
             </div>
           )}
@@ -156,7 +132,7 @@ export default function ShoppingCart({ onProceedToCheckout, onContinueShopping }
 
               <button
                 className="sc-checkout-btn"
-                onClick={onProceedToCheckout}
+                onClick={() => navigate("/payment")}
               >
                 Proceed to Checkout
               </button>
@@ -172,7 +148,8 @@ export default function ShoppingCart({ onProceedToCheckout, onContinueShopping }
                   <span className="sc-card-badge">VISA</span>
                   <span className="sc-card-badge">MC</span>
                   <span className="sc-card-badge">AMEX</span>
-                  <span className="sc-card-badge">COD</span>
+                  <span className="sc-card-badge">Genie</span>
+                  <span className="sc-card-badge">FriMi</span>
                 </div>
               </div>
             </div>

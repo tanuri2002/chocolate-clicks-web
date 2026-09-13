@@ -15,19 +15,21 @@ export default function Login() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/users/login', {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Login failed');
+      
+      if (!res.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
 
-      // store a simple session marker (user id) — replace with JWT/session in production
-      if (data && data.id) {
-        localStorage.setItem('userId', String(data.id));
-      } else {
-        localStorage.setItem('userId', 'logged-in');
+      // Store JWT token
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
       }
 
       navigate('/');
