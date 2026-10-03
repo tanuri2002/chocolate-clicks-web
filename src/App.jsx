@@ -5,9 +5,13 @@ import Navbar from "./frontend/Navbar";
 import Footer from "./frontend/Footer";
 import Home from "./frontend/Home";
 import Login from "./frontend/Login";
+import ForgotPassword from "./frontend/ForgotPassword";
+import ResetPassword from "./frontend/ResetPassword";
 import SignUp from "./frontend/SignUp";
+import AdminSignUp from "./frontend/AdminSignUp";
 import Payment from "./frontend/Payment";
 import Dashboard from './frontend/Dashboard';
+import ProtectedAdminRoute from './frontend/ProtectedAdminRoute';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
@@ -78,7 +82,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/food" element={<FoodItems />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/admin-signup" element={<AdminSignUp />} />
 
           {/* Cart — pass cart state + helpers */}
           <Route
@@ -103,7 +110,14 @@ function App() {
             }
           />
 
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedAdminRoute>
+                <Dashboard />
+              </ProtectedAdminRoute>
+            }
+          />
           <Route path="/events" element={<FoodItems />} />
           <Route path="/mask-workshop" element={<MaskWorkshop />} />
           <Route path="/about" element={<About />} />

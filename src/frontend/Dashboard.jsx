@@ -1,6 +1,7 @@
 // src/pages/Dashboard.jsx
-import React from 'react';
-import { Package, Clock, CheckCircle, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Package, Clock, CheckCircle, Users, UtensilsCrossed, Pencil, Trash2, X } from 'lucide-react';
+import { getMenuItems, createMenuItem, updateMenuItem, deleteMenuItem } from '../api';
 import './Dashboard.css';
 
 // ─── Order Data ────────────────────────────────────────────────
@@ -22,6 +23,218 @@ const recentOrders = [
   { id: "ORD-12844", customer: "David Martinez", product: "White Chocolate Cookies", amount: 34.99,  status: "Shipped",     time: "2 hours ago" },
   { id: "ORD-12843", customer: "Lisa Anderson",  product: "Chocolate Bonbons",       amount: 64.99,  status: "Cancelled",   time: "3 hours ago" },
 ];
+
+const EMPTY_FORM = { name: '', description: '', price: '', category: '', inStock: true };
+
+function MenuManagement() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [imageFile, setImageFile] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  async function loadItems() {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getMenuItems();
+      setItems(data.items || []);
+    } catch (err) {
+      setError(err.message || 'Failed to load menu items');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  function openAddForm() {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setImageFile(null);
+    setShowForm(true);
+  }
+
+  function openEditForm(item) {
+    setEditingId(item._id);
+    setForm({
+      name: item.name || '',
+      description: item.description || '',
+      price: item.price ?? '',
+      category: item.category || '',
+      inStock: item.inStock !== false,
+    });
+    setImageFile(null);
+    setShowForm(true);
+  }
+
+  function closeForm() {
+    setShowForm(false);
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setImageFile(null);
+  }
+
+  function handleFieldChange(e) {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('description', form.description);
+      formData.append('price', form.price);
+      formData.append('category', form.category);
+      formData.append('inStock', form.inStock);
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      if (editingId) {
+        await updateMenuItem(editingId, formData);
+      } else {
+        await createMenuItem(formData);
+      }
+
+      closeForm();
+      await loadItems();
+    } catch (err) {
+      setError(err.message || 'Failed to save menu item');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(id) {
+    if (!window.confirm('Delete this menu item?')) return;
+    setError(null);
+    try {
+      await deleteMenuItem(id);
+      await loadItems();
+    } catch (err) {
+      setError(err.message || 'Failed to delete menu item');
+    }
+  }
+
+  return (
+    <div className="menu-mgmt-card">
+      <div className="menu-mgmt-header">
+        <h2><UtensilsCrossed size={18} className="icon-orange" /> Menu Management</h2>
+        <button className="add-item-btn" onClick={openAddForm}>+ Add Item</button>
+      </div>
+
+      {error && <p className="menu-mgmt-error">{error}</p>}
+
+      {showForm && (
+        <form className="menu-item-form" onSubmit={handleSubmit}>
+          <div className="menu-form-row">
+            <div className="form-group">
+              <label>Name</label>
+              <input name="name" value={form.name} onChange={handleFieldChange} required />
+            </div>
+            <div className="form-group">
+              <label>Category</label>
+              <input name="category" value={form.category} onChange={handleFieldChange} required />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Description</label>
+            <textarea name="description" value={form.description} onChange={handleFieldChange} rows={2} />
+          </div>
+
+          <div className="menu-form-row">
+            <div className="form-group">
+              <label>Price (LKR)</label>
+              <input name="price" type="number" min="0" step="0.01" value={form.price} onChange={handleFieldChange} required />
+            </div>
+            <div className="form-group">
+              <label>Image</label>
+              <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0] || null)} />
+            </div>
+          </div>
+
+          <label className="menu-instock-toggle">
+            <input type="checkbox" name="inStock" checked={form.inStock} onChange={handleFieldChange} />
+            In Stock
+          </label>
+
+          <div className="menu-form-actions">
+            <button type="button" className="menu-form-cancel" onClick={closeForm}>
+              <X size={16} /> Cancel
+            </button>
+            <button type="submit" className="menu-form-save" disabled={saving}>
+              {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Add Item'}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {loading ? (
+        <p className="menu-mgmt-empty">Loading menu items...</p>
+      ) : items.length === 0 ? (
+        <p className="menu-mgmt-empty">No menu items yet. Click "Add Item" to create one.</p>
+      ) : (
+        <div className="menu-mgmt-table-wrapper">
+          <table className="menu-mgmt-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item._id}>
+                  <td>
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.name} className="menu-mgmt-thumb" />
+                    ) : (
+                      <div className="menu-mgmt-thumb menu-mgmt-thumb-empty" />
+                    )}
+                  </td>
+                  <td>{item.name}</td>
+                  <td>{item.category}</td>
+                  <td>LKR {Number(item.price).toFixed(2)}</td>
+                  <td>
+                    <span className={`customer-status ${item.inStock ? 'active' : 'inactive'}`}>
+                      {item.inStock ? '🟢 In Stock' : '⚫ Out of Stock'}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="menu-mgmt-row-actions">
+                      <button className="menu-icon-btn" onClick={() => openEditForm(item)} aria-label="Edit">
+                        <Pencil size={16} />
+                      </button>
+                      <button className="menu-icon-btn menu-icon-btn-danger" onClick={() => handleDelete(item._id)} aria-label="Delete">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Dashboard() {
   // Calculate order statistics
@@ -236,6 +449,9 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
+
+        {/* Menu Management (admin) */}
+        <MenuManagement />
       </main>
     </div>
   );

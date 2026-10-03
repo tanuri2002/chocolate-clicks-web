@@ -69,6 +69,9 @@ export default function Login() {
 
             {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
 
+            <p className="login-footer" style={{ marginBottom: "-1rem" }}>
+              <Link to="/forgot-password">Forgot Password?</Link>
+            </p>
             <p className="login-footer">
               Don't have an account? <Link to="/signup">Sign Up</Link>
             </p>

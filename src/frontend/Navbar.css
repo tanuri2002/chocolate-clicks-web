@@ -43,3 +43,18 @@
 .navbar-links a:hover {
   color: #b45309; /* hover:text-orange-900 */
 }
+
+.navbar-logout {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.navbar-logout:hover {
+  color: #b45309;
+}

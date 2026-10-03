@@ -96,3 +96,90 @@ export const getStoredUser = () => {
   const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
 };
+
+/**
+ * Check if the logged in user is an admin
+ */
+export const isAdmin = () => {
+  const user = getStoredUser();
+  return !!user && user.role === 'admin';
+};
+
+/**
+ * Get all menu items
+ */
+export const getMenuItems = () => {
+  return apiCall('/menu', 'GET');
+};
+
+/**
+ * Create a menu item. `formData` is a FormData instance so it can carry
+ * an image file (name, description, price, category, inStock, image).
+ */
+export const createMenuItem = (formData) => {
+  return apiFormCall('/menu', 'POST', formData);
+};
+
+/**
+ * Update a menu item. `formData` is a FormData instance (see createMenuItem).
+ */
+export const updateMenuItem = (id, formData) => {
+  return apiFormCall(`/menu/${id}`, 'PUT', formData);
+};
+
+/**
+ * Delete a menu item
+ */
+export const deleteMenuItem = (id) => {
+  return apiCall(`/menu/${id}`, 'DELETE');
+};
+
+/**
+ * Forgot password
+ */
+export const forgotPassword = (email) => {
+  return apiCall('/auth/forgot-password', 'POST', { email });
+};
+
+/**
+ * Reset password
+ */
+export const resetPassword = (token, newPassword) => {
+  return apiCall('/auth/reset-password', 'POST', { token, newPassword });
+};
+
+/**
+ * Like apiCall, but sends a FormData body (no Content-Type header, so the
+ * browser can set the multipart boundary itself).
+ */
+const apiFormCall = async (endpoint, method, formData) => {
+  const headers = {};
+
+  const token = localStorage.getItem('token');
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method,
+      headers,
+      body: formData,
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+      throw new Error(data.message || 'API request failed');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
