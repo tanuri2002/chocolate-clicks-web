@@ -58,3 +58,42 @@
 .navbar-logout:hover {
   color: #b45309;
 }
+
+/* ── Cart icon button ── */
+.navbar-cart-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  color: #ffffff;
+  cursor: pointer;
+  transition: color 0.3s;
+  line-height: 0; /* prevents extra height from inline-block */
+}
+
+.navbar-cart-btn:hover {
+  color: #c98b3b;
+}
+
+/* Badge pill */
+.navbar-cart-badge {
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: #c98b3b;
+  color: #0f0f0f;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}

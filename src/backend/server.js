@@ -13,10 +13,13 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/menu", require("./routes/menu"));
+app.use("/api/orders", require("./routes/orders"));
+app.use("/api/payhere", require("./routes/payhere"));
 
 // Health check route
 app.get("/", (req, res) => {

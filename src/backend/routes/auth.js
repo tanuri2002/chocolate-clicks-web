@@ -28,7 +28,7 @@ const generateToken = (id, role) => {
 // @access  Public
 router.post("/signup", async (req, res) => {
   try {
-    const { fullName, email, password, confirmPassword } = req.body;
+    const { fullName, email, password, confirmPassword, phoneNo, address } = req.body;
 
     // Validation
     if (!fullName || !email || !password || !confirmPassword) {
@@ -59,6 +59,8 @@ router.post("/signup", async (req, res) => {
       fullName,
       email,
       password,
+      phoneNo,
+      address,
     });
 
     // Generate token

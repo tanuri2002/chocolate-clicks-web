@@ -5,6 +5,8 @@ import Navbar from "./frontend/Navbar";
 import Footer from "./frontend/Footer";
 import Home from "./frontend/Home";
 import Login from "./frontend/Login";
+import ProtectedUserRoute from "./frontend/ProtectedUserRoute";
+import Profile from "./frontend/Profile";
 import ForgotPassword from "./frontend/ForgotPassword";
 import ResetPassword from "./frontend/ResetPassword";
 import SignUp from "./frontend/SignUp";
@@ -20,6 +22,11 @@ import ShoppingCart from './frontend/Shoppingcart';
 import YourHome from './assets/frontend/Home'
 import YourPayment from './assets/frontend/Payment'
 import ScrollToTop from './ScrollToTop';
+import { CartProvider } from './frontend/context/CartContext';
+import CartDrawer from './frontend/CartDrawer';
+import Checkout from './frontend/Checkout';
+import OrderSuccess from './frontend/OrderSuccess';
+import OrderCancelled from './frontend/OrderCancelled';
 
 function App() {
   // ── Cart state: single source of truth ──────────────────────────
@@ -74,14 +81,47 @@ function App() {
   }
 
   return (
-    <>
+    <CartProvider>
     <ScrollToTop />
-      <Navbar cart={cart} />
+      <Navbar />
+      <CartDrawer />
       <main className="app-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/food" element={<FoodItems />} />
           <Route path="/login" element={<Login />} />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedUserRoute>
+                <Profile />
+              </ProtectedUserRoute>
+            } 
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedUserRoute>
+                <Checkout />
+              </ProtectedUserRoute>
+            }
+          />
+          <Route
+            path="/order/success"
+            element={
+              <ProtectedUserRoute>
+                <OrderSuccess />
+              </ProtectedUserRoute>
+            }
+          />
+          <Route
+            path="/order/cancelled"
+            element={
+              <ProtectedUserRoute>
+                <OrderCancelled />
+              </ProtectedUserRoute>
+            }
+          />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/signup" element={<SignUp />} />
@@ -132,7 +172,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
-    </>
+    </CartProvider>
   );
 }
 

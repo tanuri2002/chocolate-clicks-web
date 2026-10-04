@@ -547,7 +547,8 @@
 }
 
 .menu-item-form input,
-.menu-item-form textarea {
+.menu-item-form textarea,
+.menu-item-form select {
   background-color: #1a1a1a;
   border: 1px solid rgba(34,34,34,0.8);
   border-radius: 0.5rem;
@@ -557,8 +558,14 @@
   font-size: 0.875rem;
 }
 
+.menu-item-form select option {
+  background-color: #1a1a1a;
+  color: #e5e7eb;
+}
+
 .menu-item-form input:focus,
-.menu-item-form textarea:focus {
+.menu-item-form textarea:focus,
+.menu-item-form select:focus {
   outline: none;
   border-color: #f59e0b;
 }

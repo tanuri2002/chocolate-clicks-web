@@ -26,6 +26,16 @@ const recentOrders = [
 
 const EMPTY_FORM = { name: '', description: '', price: '', category: '', inStock: true };
 
+const CATEGORY_OPTIONS = [
+  'Cakes',
+  'Brownies',
+  'Cupcakes',
+  'Cookies',
+  'Vanilla Cakes',
+  'Coffee Cakes',
+  'Chocolate Cakes',
+];
+
 function MenuManagement() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,7 +155,20 @@ function MenuManagement() {
             </div>
             <div className="form-group">
               <label>Category</label>
-              <input name="category" value={form.category} onChange={handleFieldChange} required />
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleFieldChange}
+                required
+              >
+                <option value="" disabled>Select a category</option>
+                {CATEGORY_OPTIONS.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+                {form.category && !CATEGORY_OPTIONS.includes(form.category) && (
+                  <option value={form.category}>{form.category}</option>
+                )}
+              </select>
             </div>
           </div>
 

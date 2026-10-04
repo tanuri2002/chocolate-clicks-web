@@ -1,114 +1,59 @@
 import React, { useEffect, useRef, useState } from 'react';
-
-import brownie1 from '../assets/brownie1.png';
-import brownie2 from '../assets/brownie2.jpeg';
-import brownie3 from '../assets/brownie3.jpeg';
-import cookie1 from '../assets/cookie1.jpeg';
-import cookie2 from '../assets/cookie2.jpeg';
-import cookie3 from '../assets/cookie3.jpeg';
-import cake from '../assets/cake.jpeg';
-import cake2 from '../assets/cake2.png';
-import cake3 from '../assets/cake3.jpeg';
-import cafe from '../assets/cafe.jpg';
-import cafe2 from '../assets/cafe2.jpg';
-import cafe3 from '../assets/cafe3.jpg';
+import { useCart } from './context/CartContext';
+import { getMenuItems } from '../api';
 import './FoodItems.css';
 
-// Local menu data — can migrate to a MongoDB "Menu" collection later.
-const MENU = [
-  {
-    slug: 'brownies',
-    name: 'Brownies',
-    description: 'A fudgy, chocolate-loaded bake finished with a decadent topping.',
-    images: [brownie1, brownie2, brownie3],
-    items: [
-      { name: 'Classic Fudge', price: 'LKR 850' },
-      { name: 'Nutella', price: 'LKR 950', soldOut: true },
-      { name: 'Kinder Bueno', price: 'LKR 1050' },
-      { name: 'Cookie & Brownie', price: 'LKR 950' },
-      { name: 'Oreo Brownie', price: 'LKR 900' },
-    ],
-  },
-  {
-    slug: 'cookies',
-    name: 'Cookies',
-    description: 'Soft-baked and packed with rich chocolate in every bite.',
-    images: [cookie1, cookie2, cookie3],
-    items: [
-      { name: 'Chocolate Chip', price: 'LKR 350' },
-      { name: 'Nutella Chocolate Chip', price: 'LKR 450' },
-      { name: 'Kinder Bueno Chocolate Chip', price: 'LKR 500' },
-      { name: 'Chocolate Fudge Cookie', price: 'LKR 400' },
-      { name: 'Biscoff Chocolate Chip', price: 'LKR 480', soldOut: true },
-    ],
-  },
-  {
-    slug: 'vanilla-cakes',
-    name: 'Vanilla Cakes',
-    description: 'A light vanilla sponge layered with fresh, seasonal flavor.',
-    images: [cake, cake2, cake3],
-    items: [
-      { name: 'Classic Milk Vanilla', price: 'LKR 2200' },
-      { name: 'Blueberry Vanilla', price: 'LKR 2600' },
-      { name: 'Raspberry Vanilla', price: 'LKR 2600' },
-      { name: 'Fruit Salad Vanilla', price: 'LKR 2800' },
-      { name: 'Caramelized Nuts Loaded Vanilla', price: 'LKR 3000' },
-      { name: 'Strawberry Vanilla', price: 'LKR 2600' },
-      { name: 'Nutella Vanilla', price: 'LKR 2900' },
-      { name: 'Blackberry Vanilla', price: 'LKR 2700' },
-      { name: 'Pineapple Vanilla', price: 'LKR 2500' },
-      { name: 'Salted Caramel Vanilla', price: 'LKR 2900' },
-      { name: 'Cherry Vanilla', price: 'LKR 2700' },
-    ],
-  },
-  {
-    slug: 'coffee-cakes',
-    name: 'Coffee Cakes',
-    description: 'A moist coffee-infused sponge with a smooth, aromatic finish.',
-    images: [cafe, cafe2, cafe3],
-    items: [
-      { name: 'Coffee Brownie', price: 'LKR 2600' },
-      { name: 'Coffee Tiramisu', price: 'LKR 3200' },
-      { name: 'Classic Coffee', price: 'LKR 2400' },
-      { name: 'Coffee Caramel', price: 'LKR 2800' },
-      { name: 'Coffee Nutty', price: 'LKR 2900' },
-      { name: 'Mocha', price: 'LKR 2700', soldOut: true },
-      { name: 'Coffee Cream Cheese', price: 'LKR 3000' },
-    ],
-  },
-  {
-    slug: 'chocolate-cakes',
-    name: 'Chocolate Cakes',
-    description: 'A rich chocolate sponge finished with indulgent layers.',
-    images: [cake2, cake3, cake],
-    items: [
-      { name: 'Oreo Chocolate', price: 'LKR 2900' },
-      { name: 'Snicker Cake', price: 'LKR 3100' },
-      { name: 'Raspberry Chocolate', price: 'LKR 2800' },
-      { name: 'Rich Classic Chocolate', price: 'LKR 2500' },
-      { name: 'Kinder Bueno Chocolate', price: 'LKR 3200' },
-      { name: 'Peanut Butter Chocolate', price: 'LKR 3000' },
-      { name: 'Kitkat Chocolate Fudge', price: 'LKR 3100', soldOut: true },
-      { name: 'Coffee and Chocolate', price: 'LKR 2900' },
-      { name: 'Chocolate & Salted Caramel', price: 'LKR 3000' },
-    ],
-  },
+// ── Canonical category metadata (order + subtitle) ────────────────────────
+// Matches the original hardcoded MENU. Category names must match exactly
+// what the admin stores in the `category` field in MongoDB.
+const CATEGORY_META = [
+  { name: 'Cakes',            slug: 'cakes',             description: 'Handcrafted cakes baked to perfection for every celebration.' },
+  { name: 'Brownies',         slug: 'brownies',          description: 'A fudgy, chocolate-loaded bake finished with a decadent topping.' },
+  { name: 'Cupcakes',         slug: 'cupcakes',          description: 'Tiny treats packed with rich chocolate and luscious toppings.' },
+  { name: 'Cookies',          slug: 'cookies',           description: 'Soft-baked and packed with rich chocolate in every bite.' },
+  { name: 'Vanilla Cakes',    slug: 'vanilla-cakes',     description: 'A light vanilla sponge layered with fresh, seasonal flavor.' },
+  { name: 'Coffee Cakes',     slug: 'coffee-cakes',      description: 'A moist coffee-infused sponge with a smooth, aromatic finish.' },
+  { name: 'Chocolate Cakes',  slug: 'chocolate-cakes',   description: 'A rich chocolate sponge finished with indulgent layers.' },
 ];
 
-function MenuItemCard({ item, image, description }) {
+// ── Per-card component ────────────────────────────────────────────────────
+function MenuItemCard({ item }) {
+  const { addItem } = useCart();
+  const [added, setAdded] = useState(false);
+
+  function handleAdd() {
+    if (!item.inStock) return;
+    addItem({
+      _id: item._id,         // real MongoDB ObjectId string
+      name: item.name,
+      price: item.price,     // Number from the API
+      imageUrl: item.imageUrl ?? '',
+      inStock: item.inStock,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1000);
+  }
+
   return (
     <div className="menu-card">
       <div className="menu-card-image-wrap">
-        <img src={image} alt={item.name} />
-        {item.soldOut && <span className="sold-out-badge">Sold Out</span>}
+        {item.imageUrl
+          ? <img src={item.imageUrl} alt={item.name} />
+          : <div className="menu-card-img-placeholder" aria-hidden="true" />}
+        {!item.inStock && <span className="sold-out-badge">Sold Out</span>}
       </div>
       <div className="menu-card-body">
         <h3 className="menu-card-name">{item.name}</h3>
-        <p className="menu-card-desc">{description}</p>
+        <p className="menu-card-desc">{item.description}</p>
         <div className="menu-card-footer">
-          <span className="menu-card-price">{item.price}</span>
-          <button className="menu-add-btn" disabled={item.soldOut}>
-            {item.soldOut ? 'Sold Out' : 'Add to Cart'}
+          <span className="menu-card-price">LKR {item.price.toLocaleString()}</span>
+          <button
+            className="menu-add-btn"
+            disabled={!item.inStock}
+            onClick={handleAdd}
+            aria-label={!item.inStock ? 'Sold out' : `Add ${item.name} to cart`}
+          >
+            {!item.inStock ? 'Sold Out' : added ? 'Added ✓' : 'Add to Cart'}
           </button>
         </div>
       </div>
@@ -116,10 +61,42 @@ function MenuItemCard({ item, image, description }) {
   );
 }
 
+// ── Main page ─────────────────────────────────────────────────────────────
 export default function FoodItems() {
+  // itemsByCategory: Map<categoryName, item[]>
+  const [itemsByCategory, setItemsByCategory] = useState(new Map());
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Fetch from GET /api/menu on mount
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const data = await getMenuItems();
+        if (!cancelled) {
+          // Group flat item array by category name
+          const map = new Map();
+          for (const item of data.items ?? []) {
+            const cat = item.category || 'Other';
+            if (!map.has(cat)) map.set(cat, []);
+            map.get(cat).push(item);
+          }
+          setItemsByCategory(map);
+        }
+      } catch (err) {
+        if (!cancelled) setError(err.message || 'Failed to load menu');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -136,6 +113,40 @@ export default function FoodItems() {
     if (section) {
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  // Ordered list: known categories first (in CATEGORY_META order),
+  // then any extra categories that exist in DB but aren't in CATEGORY_META.
+  const knownNames = new Set(CATEGORY_META.map((m) => m.name));
+  const extraCategories = [...itemsByCategory.keys()]
+    .filter((name) => !knownNames.has(name))
+    .map((name) => ({ name, slug: name.toLowerCase().replace(/\s+/g, '-'), description: '' }));
+
+  const orderedCategories = [...CATEGORY_META, ...extraCategories].filter(
+    (meta) => itemsByCategory.has(meta.name)
+  );
+
+  // ── Loading / error states ───────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="menu-page">
+        <section className="menu-hero">
+          <h1>Our Menu</h1>
+          <p style={{ color: '#ababab' }}>Loading items…</p>
+        </section>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="menu-page">
+        <section className="menu-hero">
+          <h1>Our Menu</h1>
+          <p style={{ color: '#c98b3b' }}>{error}</p>
+        </section>
+      </div>
+    );
   }
 
   return (
@@ -160,14 +171,14 @@ export default function FoodItems() {
 
           {dropdownOpen && (
             <ul className="menu-dropdown-list" role="listbox">
-              {MENU.map((category) => (
-                <li key={category.slug}>
+              {orderedCategories.map((meta) => (
+                <li key={meta.name}>
                   <button
                     className="menu-dropdown-item"
-                    onClick={() => jumpToCategory(category.slug)}
+                    onClick={() => jumpToCategory(meta.slug)}
                   >
-                    <span>{category.name}</span>
-                    <span className="count">({category.items.length})</span>
+                    <span>{meta.name}</span>
+                    <span className="count">({itemsByCategory.get(meta.name).length})</span>
                   </button>
                 </li>
               ))}
@@ -176,26 +187,32 @@ export default function FoodItems() {
         </div>
       </div>
 
-      {/* Menu sections */}
-      {MENU.map((category) => (
-        <section key={category.slug} id={category.slug} className="menu-section">
-          <h2 className="menu-section-heading">
-            {category.name} <span className="menu-section-count">({category.items.length})</span>
-          </h2>
-          <p className="menu-section-desc">{category.description}</p>
+      {/* Menu sections — canonical order, with subtitle */}
+      {orderedCategories.map((meta) => {
+        const items = itemsByCategory.get(meta.name);
+        return (
+          <section key={meta.name} id={meta.slug} className="menu-section">
+            <h2 className="menu-section-heading">
+              {meta.name} <span className="menu-section-count">({items.length})</span>
+            </h2>
+            {meta.description && (
+              <p className="menu-section-desc">{meta.description}</p>
+            )}
 
-          <div className="menu-grid">
-            {category.items.map((item, index) => (
-              <MenuItemCard
-                key={item.name}
-                item={item}
-                image={category.images[index % category.images.length]}
-                description={category.description}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
+            <div className="menu-grid">
+              {items.map((item) => (
+                <MenuItemCard key={item._id} item={item} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
+
+      {orderedCategories.length === 0 && (
+        <p style={{ textAlign: 'center', color: '#ababab', padding: '4rem 1rem' }}>
+          No menu items available yet.
+        </p>
+      )}
     </div>
   );
 }

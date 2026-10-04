@@ -4,7 +4,7 @@ import signup from '../assets/signup.jpeg';
 import './SignUp.css';
 
 export default function SignUp() {
-  const [form, setForm] = useState({ fullName: '', email: '', password: '', confirmPassword: '' });
+  const [form, setForm] = useState({ fullName: '', email: '', phoneNo: '', address: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -35,6 +35,8 @@ export default function SignUp() {
         body: JSON.stringify({
           fullName: form.fullName,
           email: form.email,
+          phoneNo: Number(form.phoneNo),
+          address: form.address,
           password: form.password,
           confirmPassword: form.confirmPassword,
         }),
@@ -42,15 +44,15 @@ export default function SignUp() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Signup failed');
-      
+
       // Store JWT token and user info
       if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
       }
-      
+
       setSuccess('Signup successful! Redirecting...');
-      setForm({ fullName: '', email: '', password: '', confirmPassword: '' });
+      setForm({ fullName: '', email: '', phoneNo: '', address: '', password: '', confirmPassword: '' });
       setTimeout(() => navigate('/login'), 1000);
     } catch (err) {
       setError(err.message || 'Server error');
@@ -77,6 +79,14 @@ export default function SignUp() {
 
               <div className="form-group">
                 <input name="email" value={form.email} onChange={handleChange} type="email" required placeholder="Email" />
+              </div>
+
+              <div className="form-group">
+                <input name="phoneNo" value={form.phoneNo} onChange={handleChange} type="number" required placeholder="Phone Number" />
+              </div>
+
+              <div className="form-group">
+                <input name="address" value={form.address} onChange={handleChange} type="text" required placeholder="Address" />
               </div>
 
               <div className="form-group">

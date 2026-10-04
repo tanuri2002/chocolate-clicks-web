@@ -51,12 +51,14 @@ export const apiCall = async (endpoint, method = 'GET', body = null) => {
 /**
  * Signup new user
  */
-export const signup = (fullName, email, password, confirmPassword) => {
+export const signup = (fullName, email, password, confirmPassword, phoneNo, address) => {
   return apiCall('/auth/signup', 'POST', {
     fullName,
     email,
     password,
     confirmPassword,
+    phoneNo,
+    address,
   });
 };
 
@@ -132,6 +134,27 @@ export const updateMenuItem = (id, formData) => {
  */
 export const deleteMenuItem = (id) => {
   return apiCall(`/menu/${id}`, 'DELETE');
+};
+
+/**
+ * Create a new order & obtain PayHere params
+ */
+export const createOrder = (orderData) => {
+  return apiCall('/orders', 'POST', orderData);
+};
+
+/**
+ * Get an order by ID
+ */
+export const getOrderById = (id) => {
+  return apiCall(`/orders/${id}`, 'GET');
+};
+
+/**
+ * Get current user orders
+ */
+export const getMyOrders = () => {
+  return apiCall('/orders/mine', 'GET');
 };
 
 /**
