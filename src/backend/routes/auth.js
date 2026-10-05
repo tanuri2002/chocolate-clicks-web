@@ -1,15 +1,23 @@
 const express = require("express");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { protect } = require("../middleware/auth");
 
 const router = express.Router();
 
 // Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
+};
+
+const matchesSecret = (provided, expected) => {
+  if (typeof provided !== "string" || typeof expected !== "string") return false;
+  const providedBuffer = Buffer.from(provided);
+  const expectedBuffer = Buffer.from(expected);
+  return providedBuffer.length === expectedBuffer.length && crypto.timingSafeEqual(providedBuffer, expectedBuffer);
 };
 
 // @route   POST /api/auth/signup
@@ -51,7 +59,7 @@ router.post("/signup", async (req, res) => {
     });
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role);
 
     res.status(201).json({
       success: true,
@@ -60,6 +68,7 @@ router.post("/signup", async (req, res) => {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
+        role: user.role,
       },
       message: "User registered successfully",
     });
@@ -105,7 +114,7 @@ router.post("/login", async (req, res) => {
     }
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role);
 
     res.status(200).json({
       success: true,
@@ -114,6 +123,7 @@ router.post("/login", async (req, res) => {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
+        role: user.role,
       },
       message: "Login successful",
     });
@@ -122,6 +132,63 @@ router.post("/login", async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+});
+
+router.post("/admin-setup", async (req, res) => {
+  try {
+    const { fullName, email, password, confirmPassword, setupSecret } = req.body;
+
+    if (!matchesSecret(setupSecret, process.env.ADMIN_SETUP_SECRET)) {
+      return res.status(403).json({ success: false, message: "Invalid admin setup secret" });
+    }
+
+    if (await User.exists({ role: "admin" })) {
+      return res.status(409).json({ success: false, message: "An admin account already exists" });
+    }
+
+    if (!fullName || !email || !password || password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: "Provide name, email, password, and matching confirmation" });
+    }
+
+    const user = await User.create({ fullName, email, password, role: "admin" });
+    const token = generateToken(user._id, user.role);
+
+    return res.status(201).json({
+      success: true,
+      token,
+      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post("/admin-signup", async (req, res) => {
+  try {
+    const { fullName, email, password, confirmPassword, adminSecret } = req.body;
+
+    if (!matchesSecret(adminSecret, process.env.ADMIN_SIGNUP_SECRET)) {
+      return res.status(403).json({ success: false, message: "Invalid admin signup secret" });
+    }
+
+    if (!fullName || !email || !password || password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: "Provide name, email, password, and matching confirmation" });
+    }
+
+    if (await User.exists({ email })) {
+      return res.status(409).json({ success: false, message: "An account with this email already exists" });
+    }
+
+    const user = await User.create({ fullName, email, password, role: "admin" });
+    const token = generateToken(user._id, user.role);
+    return res.status(201).json({
+      success: true,
+      token,
+      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
 });
 

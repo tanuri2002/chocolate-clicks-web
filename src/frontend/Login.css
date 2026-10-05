@@ -55,7 +55,7 @@
 .login-form-wrapper {
   width: 100%;
   max-width: 28rem; /* max-w-md */
-  padding: 2.5rem 3rem; /* py-10 px-12 */
+  padding: 2rem clamp(0px, 3vw, 3rem);
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
@@ -88,7 +88,7 @@
   gap: 1.5rem;
 }
 
-.form-group label {
+.login-page .form-group label {
   display: block;
   font-size: 0.875rem; /* text-sm */
   color: #9ca3af; /* gray-400 */
@@ -96,23 +96,23 @@
   font-weight: 500;
 }
 
-.form-group input {
+.login-page .form-group input {
   width: 100%;
   padding: 1rem 1.25rem; /* py-4 px-5 */
   background-color: #1a1a1a; /* gray-900 */
   border: 2px solid rgba(255, 140, 0, 0.38); /* orange-900/60 */
   border-radius: 0.75rem; /* rounded-lg */
-  color: white;
+  color: rgb(14, 10, 10);
   caret-color: #ff9800;
   -webkit-text-fill-color: white;
   font-size: 1rem;
 }
 
-.form-group input::placeholder {
+.login-page .form-group input::placeholder {
   color: #6b7280; /* gray-600 */
 }
 
-.form-group input:focus {
+.login-page .form-group input:focus {
   outline: none;
   border-color: #ff9800; /* smores-orange */
   box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.25); /* ring-smores-orange/40 */

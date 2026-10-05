@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Payment.css";
+import "../../frontend/Payment.css";
 
 export default function Payment() {
   const [selectedPayment, setSelectedPayment] = useState("card");

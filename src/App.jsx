@@ -6,10 +6,12 @@ import Home from "./frontend/Home";
 import Login from "./frontend/Login";
 import SignUp from "./frontend/SignUp";
 import Payment from "./frontend/Payment";
-import Dashboard from './frontend/Dashboard';
+import Dashboard from './frontend/AdminDashboard';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
+import ProtectedAdminRoute from './frontend/ProtectedAdminRoute';
+import WorkshopRegistration from './frontend/WorkshopRegistration';
 
 // Your original components (preserved)
 import YourHome from './assets/frontend/Home'
@@ -27,9 +29,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/payment" element={<Payment />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<ProtectedAdminRoute><Dashboard /></ProtectedAdminRoute>} />
         <Route path="/events" element={<FoodItems />} />
         <Route path="/mask-workshop" element={<MaskWorkshop />} />
+        <Route path="/workshop/:id/register" element={<WorkshopRegistration />} />
         <Route path="/about" element={<About />} />
         
         {/* Your original routes preserved with /my prefix */}

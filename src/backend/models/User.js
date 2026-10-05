@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false, // Password won't be returned by default
     },
+    role: {
+      type: String,
+      enum: ["customer", "admin"],
+      default: "customer",
+    },
     phone: {
       type: String,
       default: "",

@@ -91,6 +91,8 @@
 
 .footer-bottom-links {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem; /* gap-4 */
   margin-top: 1rem;
 }

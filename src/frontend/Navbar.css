@@ -1,5 +1,5 @@
 .navbar {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
@@ -10,8 +10,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 2.5rem; /* md:px-10 */
-  background-color: #2a1810;
-  border-bottom: 1px solid #1f1f1f; /* border-gray-800 */
+  background-color: #130b08;
+  /*border-bottom: 1px solid #1f1f1f; /* border-gray-800 */
   font-family: 'Kalnia', sans-serif;
 }
 
@@ -19,6 +19,28 @@
   font-size: 1.5rem; /* text-2xl */
   font-weight: 600;
   color: #ffffff;
+  text-decoration: none;
+}
+
+.navbar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #c98b3b;
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.navbar a:focus-visible,
+.navbar-toggle:focus-visible {
+  outline: 2px solid #c98b3b;
+  outline-offset: 4px;
 }
 
 .navbar-links {
@@ -43,3 +65,27 @@
 .navbar-links a:hover {
   color: #b45309; /* hover:text-orange-900 */
 }
+
+@media (max-width: 1023px) {
+  .navbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 60px auto;
+    height: auto;
+    padding: 0 1rem;
+  }
+  .navbar-logo { font-size: clamp(1rem, 3.5vw, 1.5rem); }
+  .navbar-toggle { display: flex; }
+  .navbar-links {
+    display: none;
+    grid-column: 1 / -1;
+    max-height: calc(100dvh - 60px);
+    overflow-y: auto;
+    padding: 0.75rem 0;
+    background: #2a1810;
+    border-bottom: 1px solid #c98b3b;
+  }
+  .navbar-links.is-open { display: flex; flex-direction: column; gap: 0; }
+  .navbar-links a { display: flex; align-items: center; min-height: 44px; padding: 0.5rem; }
+}
+

@@ -84,7 +84,8 @@
     grid-template-rows: auto auto auto;
   }
   .img-right { grid-column: 1 / 2; grid-row: 2 / 3; height:auto; }
-  .img-left-top, .img-left-bottom { height:auto; }
+  .img-left-top { grid-column: 1; grid-row: 1; height:auto; }
+  .img-left-bottom { grid-column: 1; grid-row: 3; height:auto; }
 }
 
 .studio-section {
@@ -100,19 +101,19 @@
   font-family: Kalnia, serif, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-h1, h2 {
+.about-page h1, .about-page h2 {
   margin: 0;
   color: var(--text-100);
 }
-h1 { font-size: 1.5rem; }
-h2 { font-size: 2rem; }
+.about-page h1 { font-size: 1.5rem; }
+.about-page h2 { font-size: 2rem; }
 
-p { color: #d1d5db; line-height: 1.6; margin: 0; }
+.about-page p { color: #d1d5db; line-height: 1.6; margin: 0; }
 
 .meta { color: #d1d5db; font-size: .9rem; }
 .meta strong { color: var(--accent-amber); display:block; margin-bottom: .25rem; }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .about-content { padding: 3rem 5rem 4rem; }
   .about-section { grid-template-columns: 1fr 1fr; }
   .image-card { /* let specific placement classes control height */ }
