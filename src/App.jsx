@@ -12,12 +12,13 @@ import ResetPassword from "./frontend/ResetPassword";
 import SignUp from "./frontend/SignUp";
 import AdminSignUp from "./frontend/AdminSignUp";
 import Payment from "./frontend/Payment";
-import Dashboard from './frontend/Dashboard';
+import ProtectedAdminRoute from './frontend/ProtectedAdminRoute';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
-
-// Your original components (preserved)
+import WorkshopRegistration from './frontend/WorkshopRegistration';
+import Cakes from './frontend/cakes';
+import ShoppingCart from './frontend/Shoppingcart';
 import YourHome from './assets/frontend/Home'
 import YourPayment from './assets/frontend/Payment'
 import ScrollToTop from './ScrollToTop';
@@ -99,6 +100,9 @@ function App() {
           {/* Your original routes preserved with /my prefix */}
           <Route path="/my-home" element={<YourHome />} />
           <Route path="/my-payment" element={<YourPayment />} />
+          <Route path="/AdminDashboard" element={<AdminDashboard />} />
+          <Route path="/ProtectedAdminRoute" element={<ProtectedAdminRoute />} />
+          <Route path="/WorkshopRegistration" element={<WorkshopRegistration />} />
         </Routes>
       </main>
       <Footer />
