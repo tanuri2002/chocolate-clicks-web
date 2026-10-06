@@ -129,11 +129,12 @@
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: minmax(0, 1fr) 400px;
   gap: 30px;
 }
 
 .payment-content {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -394,7 +395,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   height: fit-content;
   position: sticky;
-  top: 20px;
+  top: 80px;
 }
 
 .order-summary-panel h3 {
@@ -426,6 +427,19 @@
 
 .item-details {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Keep payment rows independent of dashboard order-row styles. */
+.payment-container .order-item { flex-direction: row; }
+.payment-container .order-item img { flex-shrink: 0; }
+.payment-container .logo { padding: 0; }
+
+@media (max-width: 480px) {
+  .payment-container .logo-section { flex-wrap: wrap; justify-content: center; }
+  .payment-container .logo-section h1 { font-size: 1.25rem; }
+  .payment-container .card-types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 .item-details h4 {
@@ -716,7 +730,7 @@
   }
 
   .card-types {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .card-type-option {

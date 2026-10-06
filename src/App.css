@@ -43,8 +43,8 @@
   color: #888;
 }
 
-/* push main content below fixed navbar */
+/* The sticky navbar reserves its own space above main content. */
 .app-content {
-  padding-top: 60px;
+  min-width: 0;
   background-color: #0a0a0a;
 }

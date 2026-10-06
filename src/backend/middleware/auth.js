@@ -18,12 +18,11 @@ exports.protect = async (req, res, next) => {
     try {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
       const user = await User.findById(decoded.id);
       if (!user) {
         return res.status(401).json({ success: false, message: "The user belonging to this token does no longer exist" });
       }
-      
+
       if (user.passwordChangedAt) {
         const changedTimestamp = parseInt(user.passwordChangedAt.getTime() / 1000, 10);
         if (decoded.iat < changedTimestamp) {

@@ -2,13 +2,9 @@
 
 .hero {
   position: relative;
-  width: 100vw;
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100svh - 60px);
   background-color: #0f0f0f;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
   padding-bottom: 100px;
 }
 
@@ -50,7 +46,8 @@
 
 .hero-text h1 {
   font-family: "Kalnia", serif;
-  font-size: 3rem;
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  max-width: 1000px;
   font-weight: 500;
 }
 
@@ -75,8 +72,8 @@
 /* Logo circle */
 .logo-wrapper {
   position: absolute;
-  bottom: -70px; /* adjust to sit slightly outside hero */
   left: 50%;
+  bottom: -70px; /* adjust to sit slightly outside hero */
   transform: translateX(-50%);
   width: 140px;
   height: 140px;
@@ -99,14 +96,10 @@
 /* ==================== SECTION 1: Clashed Image ==================== */
 .section-1 {
   background-color: #0f0f0f;
-  padding: 250px 100px;
+  padding: clamp(120px, 15vw, 250px) clamp(16px, 7vw, 100px);
   position: relative;
-  width: 100vw;
-  height: 800px;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  width: 100%;
+  min-height: 400px;
   overflow: hidden;
 }
 
@@ -151,12 +144,8 @@
 /* ==================== SECTION 2: Text on Image ==================== */
 .section-2 {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 800px;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
   overflow: hidden;
 }
 
@@ -200,12 +189,8 @@
 .section-3 {
   background-color: #0f0f0f;
   padding: 80px 20px;
-  width: 100vw;
+  width: 100%;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -315,12 +300,8 @@
 .section-4 {
   background-color: #0f0f0f;
   padding: 80px 20px;
-  width: 100vw;
+  width: 100%;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
 }
 
 .gallery-container {
@@ -390,25 +371,21 @@
 .section-5 {
   background-color: #0f0f0f;
   padding: 0px 20px;
-  width: 100vw;
+  width: 100%;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
   height: auto;
   margin-bottom: 0;
 }
 
 .gallery-containersection5 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   height: auto;
 }
 
 .gallery-itemleftpara {
   position: relative;
-  height: 1000px;
+  min-height: 350px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -417,19 +394,19 @@
   text-align: left;
   padding: 20px;
   font-family: "Kalnia", serif;
-  font-size: 2rem;
+  font-size: clamp(1.25rem, 2.5vw, 2rem);
   font-weight: lighter;
 }
 .gallery-item.bigleft {
   position: relative;
-  height: 1000px;
+  height: clamp(350px, 65vw, 1000px);
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 }
 .gallery-item.bigright {
   position: relative;
-  height: 1000px;
+  height: clamp(350px, 65vw, 1000px);
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
@@ -458,7 +435,16 @@
 
   .gallery-container {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
+
+  .gallery-containersection5 { grid-template-columns: 1fr; }
+  .gallery-itemleftpara { min-height: 0; padding: 48px 16px; }
+  .gallery-item { height: clamp(280px, 85vw, 500px); }
+  .section-3, .section-4 { padding: 40px 16px; }
+  .section-5 { padding: 0 16px; }
+  .overlay h3 { font-size: clamp(1.25rem, 5vw, 2rem); padding: 0 16px; }
+  .hero-text { padding: 32px 16px 100px; }
 
   .section-2 {
     height: 300px;

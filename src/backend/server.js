@@ -20,6 +20,8 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/menu", require("./routes/menu"));
 app.use("/api/orders", require("./routes/orders"));
 app.use("/api/payhere", require("./routes/payhere"));
+app.use("/api/workshops", require("./routes/workshops"));
+app.use("/api/admin", require("./routes/admin"));
 
 // Health check route
 app.get("/", (req, res) => {

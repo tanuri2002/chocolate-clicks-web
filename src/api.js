@@ -48,6 +48,24 @@ export const apiCall = async (endpoint, method = 'GET', body = null) => {
   }
 };
 
+const apiFormCall = async (endpoint, method, formData) => {
+  const headers = {};
+  const token = localStorage.getItem('token');
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE_URL}${endpoint}`, { method, headers, body: formData });
+  const data = await res.json();
+  if (!res.ok) {
+    if (res.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    throw new Error(data.message || 'API request failed');
+  }
+  return data;
+};
+
 /**
  * Signup new user
  */
@@ -73,7 +91,7 @@ export const login = (email, password) => {
  * Get current logged in user
  */
 export const getCurrentUser = () => {
-  return apiCall('/auth/me', 'GET');
+  return apiCall('/auth/me', 'GET').then((data) => data.user);
 };
 
 /**
@@ -98,6 +116,15 @@ export const getStoredUser = () => {
   const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
 };
+
+export const getWorkshops = (period = 'upcoming') => apiCall(`/workshops?period=${period}`, 'GET');
+export const getWorkshop = (id) => apiCall(`/workshops/${id}`, 'GET');
+export const getAdminWorkshops = () => apiCall('/workshops/admin', 'GET');
+export const createWorkshop = (formData) => apiFormCall('/workshops', 'POST', formData);
+export const updateWorkshopCapacity = (id, capacity) => apiCall(`/workshops/${id}/capacity`, 'PATCH', { capacity });
+export const registerForWorkshop = (id, registration) => apiCall(`/workshops/${id}/registrations`, 'POST', registration);
+export const getWorkshopRegistrations = (id) => apiCall(`/workshops/${id}/registrations`, 'GET');
+export const getAdminStats = () => apiCall('/admin/stats', 'GET');
 
 /**
  * Check if the logged in user is an admin

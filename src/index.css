@@ -2,6 +2,10 @@
 @tailwind utilities;
 
 /* Combined styles from both branches */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,14 +15,15 @@ html {
   width: 100%;
 }
 
+img { max-width: 100%; }
+
+input, select, textarea { min-width: 0; }
+
 @layer base {
   body {
     width: 100%;
     margin: 0;
     padding: 0;
-    /* reserve space for fixed navbar (60px height) to avoid content hiding */
-    /* padding-top: 60px; */
-    padding-top: 60px;
     /* ensure dark background even if Tailwind utilities aren't applied */
     background-color: #0a0a0a;
     color: #f3f4f6;

@@ -175,3 +175,13 @@
    - Add email verification for signup
    - Implement refresh tokens for better security
 
+## Workshop Backend Setup
+
+The workshop features use the existing Express/MongoDB backend. Copy `src/backend/.env.example` to `src/backend/.env`, then set `MONGO_URI`, `JWT_SECRET`, `ADMIN_SETUP_SECRET`, and the three Cloudinary credentials. Keep `.env` private and never commit it.
+
+Start the backend from `src/backend` with `npm install` and `npm start`. Start the Vite frontend separately from the repository root with `npm run dev`.
+
+Create the first admin by sending one `POST` request to `http://localhost:5000/api/auth/admin-setup` with JSON fields `fullName`, `email`, `password`, `confirmPassword`, and `setupSecret`. The `setupSecret` must match `ADMIN_SETUP_SECRET`. The endpoint refuses creation after an admin already exists. For additional admins, use `POST http://localhost:5000/api/auth/admin-signup` with the same account fields and `adminSecret` matching `ADMIN_SIGNUP_SECRET`. Use a strong, private value for both secrets. Then log in through the website and open `/dashboard`; regular customer accounts are redirected away, and admin APIs verify the role on every request.
+
+Admin workshop creation uploads a banner to Cloudinary. Public workshop listings and guest registrations use `/api/workshops`; registration records are linked to their workshop in MongoDB. The same email cannot register more than once for a workshop.
+

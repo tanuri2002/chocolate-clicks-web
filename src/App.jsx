@@ -13,12 +13,11 @@ import SignUp from "./frontend/SignUp";
 import AdminSignUp from "./frontend/AdminSignUp";
 import Payment from "./frontend/Payment";
 import Dashboard from './frontend/Dashboard';
-import ProtectedAdminRoute from './frontend/ProtectedAdminRoute';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
-import Cakes from './frontend/cakes';
-import ShoppingCart from './frontend/Shoppingcart';
+
+// Your original components (preserved)
 import YourHome from './assets/frontend/Home'
 import YourPayment from './assets/frontend/Payment'
 import ScrollToTop from './ScrollToTop';
@@ -82,7 +81,7 @@ function App() {
 
   return (
     <CartProvider>
-    <ScrollToTop />
+      <ScrollToTop />
       <Navbar />
       <CartDrawer />
       <main className="app-content">
@@ -90,83 +89,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/food" element={<FoodItems />} />
           <Route path="/login" element={<Login />} />
-          <Route 
-            path="/profile" 
-            element={
-              <ProtectedUserRoute>
-                <Profile />
-              </ProtectedUserRoute>
-            } 
-          />
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedUserRoute>
-                <Checkout />
-              </ProtectedUserRoute>
-            }
-          />
-          <Route
-            path="/order/success"
-            element={
-              <ProtectedUserRoute>
-                <OrderSuccess />
-              </ProtectedUserRoute>
-            }
-          />
-          <Route
-            path="/order/cancelled"
-            element={
-              <ProtectedUserRoute>
-                <OrderCancelled />
-              </ProtectedUserRoute>
-            }
-          />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/admin-signup" element={<AdminSignUp />} />
-
-          {/* Cart — pass cart state + helpers */}
-          <Route
-            path="/cart"
-            element={
-              <ShoppingCart
-                cart={cart}
-                onUpdateQty={updateQty}
-                onRemove={removeFromCart}
-              />
-            }
-          />
-
-          {/* Payment — receives cart as props, clears it on success */}
-          <Route
-            path="/payment"
-            element={
-              <Payment
-                cart={cart}
-                onClearCart={clearCart}
-              />
-            }
-          />
-
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedAdminRoute>
-                <Dashboard />
-              </ProtectedAdminRoute>
-            }
-          />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/events" element={<FoodItems />} />
           <Route path="/mask-workshop" element={<MaskWorkshop />} />
           <Route path="/about" element={<About />} />
-          <Route
-            path="/cakes"
-            element={<Cakes onAddToCart={addToCart} cart={cart} />}
-          />
 
-          {/* Original routes preserved */}
+          {/* Your original routes preserved with /my prefix */}
           <Route path="/my-home" element={<YourHome />} />
           <Route path="/my-payment" element={<YourPayment />} />
         </Routes>

@@ -1,7 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getWorkshops } from "../api";
 import "./MaskWorkshop.css";
 
 export default function MaskWorkshop() {
+  const navigate = useNavigate();
+  const [upcoming, setUpcoming] = useState([]);
+  const [past, setPast] = useState([]);
+  const [workshopError, setWorkshopError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([getWorkshops("upcoming"), getWorkshops("past")])
+      .then(([upcomingData, pastData]) => {
+        if (cancelled) return;
+        setUpcoming(upcomingData.workshops || []);
+        setPast(pastData.workshops || []);
+      })
+      .catch((error) => {
+        if (!cancelled) setWorkshopError(error.message || "Workshop information is unavailable.");
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const formatDate = (date) => new Intl.DateTimeFormat(undefined, {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(new Date(date));
+
   return (
     <section className="mask-workshop-page">
       <div className="mask-workshop-top">
@@ -55,8 +81,41 @@ export default function MaskWorkshop() {
         </div>
       </div>
 
+      <section className="workshop-public-section" aria-labelledby="upcoming-workshops-heading">
+        <p className="workshop-public-kicker">Make something with us</p>
+        <h2 id="upcoming-workshops-heading">Upcoming workshops</h2>
+        {workshopError && <p className="workshop-public-message" role="status">{workshopError}</p>}
+        {!workshopError && upcoming.length === 0 && <p className="workshop-public-message">No upcoming workshops are scheduled right now.</p>}
+        <div className="public-workshop-grid">
+          {upcoming.map((workshop) => (
+            <article className="public-workshop-card" key={workshop._id}>
+              <img src={workshop.bannerUrl} alt={`${workshop.title} banner`} />
+              <div className="public-workshop-card-content">
+                <p className="public-workshop-date">{formatDate(workshop.date)}</p>
+                <h3>{workshop.title}</h3>
+                <p>{workshop.description}</p>
+                <p className="public-workshop-location">{workshop.location}</p>
+                <p className="public-workshop-count">{workshop.registrationCount || 0} registered</p>
+                <button type="button" onClick={() => navigate(`/workshop/${workshop._id}/register`)}>Register</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <div className="layered-editions-section">
-        <h2 className="editions-heading">10 editions down</h2>
+        <h2 className="editions-heading">Past workshops</h2>
+        <p className="past-workshop-count">{past.length} previous workshop{past.length === 1 ? "" : "s"}</p>
+        {past.length > 0 && (
+          <div className="past-workshop-list">
+            {past.map((workshop) => (
+              <article className="past-workshop-item" key={workshop._id}>
+                <img src={workshop.bannerUrl} alt={`${workshop.title} banner`} />
+                <div><h3>{workshop.title}</h3><p>{formatDate(workshop.date)} · {workshop.location}</p><p>{workshop.registrationCount || 0} registered</p></div>
+              </article>
+            ))}
+          </div>
+        )}
         
         <div className="layered-images-container">
           {/* Bottom layer - 2 images */}

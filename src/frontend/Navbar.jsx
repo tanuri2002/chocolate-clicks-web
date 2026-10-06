@@ -1,12 +1,16 @@
 // src/frontend/Navbar.jsx
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { isAuthenticated, isAdmin, logout } from '../api';
 import { useCart } from './context/CartContext';
 import './Navbar.css';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [openPath, setOpenPath] = useState(null);
+  const isOpen = openPath === pathname;
+
   const loggedIn = isAuthenticated();
   const admin = isAdmin();
   const { totalItems, openCart } = useCart();
@@ -18,18 +22,39 @@ export default function Navbar() {
 
   function handleCartClick() {
     openCart();
+    setOpenPath(null); // Close mobile menu when cart opens
   }
 
   return (
-    <nav className="navbar">
-      <div className="navbar-logo">Chocolate Clicks</div>
-      <div className="navbar-links">
+    <nav className="navbar" aria-label="Main navigation" onKeyDown={(event) => {
+      if (event.key === 'Escape' && isOpen) {
+        setOpenPath(null);
+        event.currentTarget.querySelector('.navbar-toggle').focus();
+      }
+    }}>
+      <Link className="navbar-logo" to="/" onClick={() => setOpenPath(null)}>Chocolate Clicks</Link>
+
+      <button
+        className="navbar-toggle"
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls="main-navigation-links"
+        aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        onClick={() => setOpenPath(isOpen ? null : pathname)}
+      >
+        <span aria-hidden="true">{isOpen ? '✕' : '☰'}</span>
+        <span>Menu</span>
+      </button>
+
+      <div id="main-navigation-links" className={`navbar-links${isOpen ? ' is-open' : ''}`} onClick={() => setOpenPath(null)}>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/events">Our-Items</Link>
         {/* <Link to="/payment">Payments</Link> */}
+
         {admin && <Link to="/dashboard">Dashboard</Link>}
         {loggedIn && <Link to="/profile">Profile</Link>}
+
         {loggedIn ? (
           <button className="navbar-logout" onClick={handleLogout}>Log out</button>
         ) : (
