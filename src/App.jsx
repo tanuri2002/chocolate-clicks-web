@@ -13,6 +13,8 @@ import SignUp from "./frontend/SignUp";
 import AdminSignUp from "./frontend/AdminSignUp";
 import Payment from "./frontend/Payment";
 import ProtectedAdminRoute from './frontend/ProtectedAdminRoute';
+import AdminDashboard from './frontend/AdminDashboard';
+import Dashboard from './frontend/Dashboard';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
@@ -100,9 +102,8 @@ function App() {
           {/* Your original routes preserved with /my prefix */}
           <Route path="/my-home" element={<YourHome />} />
           <Route path="/my-payment" element={<YourPayment />} />
-          <Route path="/AdminDashboard" element={<AdminDashboard />} />
-          <Route path="/ProtectedAdminRoute" element={<ProtectedAdminRoute />} />
-          <Route path="/WorkshopRegistration" element={<WorkshopRegistration />} />
+          <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+          <Route path="/workshop/:id/register" element={<WorkshopRegistration />} />
         </Routes>
       </main>
       <Footer />

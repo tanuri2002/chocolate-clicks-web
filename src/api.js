@@ -48,24 +48,6 @@ export const apiCall = async (endpoint, method = 'GET', body = null) => {
   }
 };
 
-const apiFormCall = async (endpoint, method, formData) => {
-  const headers = {};
-  const token = localStorage.getItem('token');
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  const res = await fetch(`${API_BASE_URL}${endpoint}`, { method, headers, body: formData });
-  const data = await res.json();
-  if (!res.ok) {
-    if (res.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    throw new Error(data.message || 'API request failed');
-  }
-  return data;
-};
-
 /**
  * Signup new user
  */
