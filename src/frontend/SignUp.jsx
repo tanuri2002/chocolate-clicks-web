@@ -1,119 +1,112 @@
-import signup from '../assets/signup.jpeg'; 
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import signup from '../assets/signup.jpeg';
+import './SignUp.css';
 
 export default function SignUp() {
+  const [form, setForm] = useState({ fullName: '', email: '', phoneNo: '', address: '', password: '', confirmPassword: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const navigate = useNavigate();
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
+
+    // Validate password match
+    if (form.password !== form.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: form.fullName,
+          email: form.email,
+          phoneNo: Number(form.phoneNo),
+          address: form.address,
+          password: form.password,
+          confirmPassword: form.confirmPassword,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Signup failed');
+
+      // Store JWT token and user info
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+
+      setSuccess('Signup successful! Redirecting...');
+      setForm({ fullName: '', email: '', phoneNo: '', address: '', password: '', confirmPassword: '' });
+      setTimeout(() => navigate('/login'), 1000);
+    } catch (err) {
+      setError(err.message || 'Server error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div className="h-screen flex flex-col bg-gray-950 text-white overflow-hidden pt-16">
-      {/* Main content – side by side on large screens */}
-      <div className="flex-1 grid lg:grid-cols-2">
-        {/* Left: Image – hidden on mobile, shown from lg breakpoint */}
-        <div className="hidden lg:flex items-center justify-center bg-gray-950">
-          <img
-            src={signup}
-            alt="Tray of gooey S'mores brownies with toasted marshmallows"
-            className="w-full max-w-3xl h-auto object-cover shadow-2xl shadow-black/60 "
-          />
+    <div className="signup-page">
+      <div className="signup-container">
+        <div className="signup-image">
+          <img src={signup} alt="Tray of gooey S'mores brownies with toasted marshmallows" />
         </div>
 
-        {/* Right: Form – always visible, centered */}
-        <div className="flex flex-col items-center justify-start pt-70 lg:pt-15 pb-6">
-          <div className="w-full max-w-md space-y-9 px-6 py-0 sm:px-12 lg:px-16 xl:px-0">
-            <h1 className="text-3xl md:text-4xl  text-center lg:text-left" style={{ fontFamily: 'Kalnia' }}>
-              Welcome to Chocolate Clicks!
-            </h1>
+        <div className="signup-form-container">
+          <div className="signup-form-wrapper">
+            <h1 className="signup-title">Welcome to Chocolate Clicks!</h1>
 
-            <form className="space-y-3" style={{ fontFamily: 'Kalnia' }}>
-              <div>
-                <input
-                  id="firstName"
-                  type="text"
-                  required
-                  className="
-                    w-full px-5 py-4 bg-orange-950 border-2 border-orange-900/60
-                    rounded-lg text-white placeholder-white/60 
-                    focus:outline-none focus:border-smores-orange 
-                    focus:ring-2 focus:ring-smores-orange/40 transition
-                  "
-                  placeholder="First Name"
-                />
+            <form className="signup-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <input name="fullName" value={form.fullName} onChange={handleChange} type="text" required placeholder="Full Name" />
               </div>
 
-              <div>
-                <input
-                  id="lastName"
-                  type="text"
-                  required
-                  className="
-                    w-full px-5 py-4 bg-orange-950 border-2 border-orange-900/60
-                    rounded-lg text-white placeholder-white/60 
-                    focus:outline-none focus:border-smores-orange 
-                    focus:ring-2 focus:ring-smores-orange/40 transition
-                  "
-                  placeholder="Last Name"
-                />
+              <div className="form-group">
+                <input name="email" value={form.email} onChange={handleChange} type="email" required placeholder="Email" />
               </div>
 
-              <div>
-                <input
-                  id="contactNumber"
-                  type="tel"
-                  required
-                  className="
-                    w-full px-5 py-4 bg-orange-950 border-2 border-orange-900/60
-                    rounded-lg text-white placeholder-white/60 
-                    focus:outline-none focus:border-smores-orange 
-                    focus:ring-2 focus:ring-smores-orange/40 transition
-                  "
-                  placeholder="Contact Number"
-                />
+              <div className="form-group">
+                <input name="phoneNo" value={form.phoneNo} onChange={handleChange} type="number" required placeholder="Phone Number" />
               </div>
 
-              <div>
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  className="
-                    w-full px-5 py-4 bg-orange-950 border-2 border-orange-900/60
-                    rounded-lg text-white placeholder-white/60 
-                    focus:outline-none focus:border-smores-orange 
-                    focus:ring-2 focus:ring-smores-orange/40 transition
-                  "
-                  placeholder="Email"
-                />
+              <div className="form-group">
+                <input name="address" value={form.address} onChange={handleChange} type="text" required placeholder="Address" />
               </div>
 
-              <div>
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  className="
-                    w-full px-5 py-4 bg-orange-950 border-2 border-orange-900/60
-                    rounded-lg text-white placeholder-white/60 
-                    focus:outline-none focus:border-smores-orange 
-                    focus:ring-2 focus:ring-smores-orange/40 transition
-                  "
-                  placeholder="Password"
-                />
+              <div className="form-group">
+                <input name="password" value={form.password} onChange={handleChange} type="password" required placeholder="Password" />
               </div>
 
-              <button
-                type="submit"
-                className="
-                  w-full py-4 bg-white text-gray-950  
-                  rounded-xl hover:bg-orange-400 transition duration-200
-                  shadow-lg shadow-smores-orange/20
-                "
-              >
-                Sign Up
+              <div className="form-group">
+                <input name="confirmPassword" value={form.confirmPassword} onChange={handleChange} type="password" required placeholder="Confirm Password" />
+              </div>
+
+              <button type="submit" className="signup-button" disabled={loading}>
+                {loading ? 'Signing...' : 'Sign Up'}
               </button>
             </form>
 
-            <p className="text-center text-orange-500 text-sm" style={{ fontFamily: 'Kalnia' }}>
-              Already Have an Account?{' '}
-              <a href="/login" className="text-smores-orange hover:underline font-medium text-blue-800">
-                Log in
-              </a>
+            {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
+            {success && <p style={{ color: 'lightgreen', textAlign: 'center' }}>{success}</p>}
+
+            <p className="signup-footer">
+              Have an Account? <Link to="/login">Log In</Link>
             </p>
           </div>
         </div>

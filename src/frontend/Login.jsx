@@ -1,74 +1,79 @@
-import login1 from '../assets/login1.jpeg'; 
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './Login.css';
+import login1 from '../assets/login1.jpeg';
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Store JWT token
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+
+      navigate('/');
+    } catch (err) {
+      setError(err.message || 'Server error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div className="h-screen flex flex-col bg-gray-950 text-white overflow-hidden pt-16">
-      {/* Main content – side by side on large screens */}
-      <div className="flex-1 grid lg:grid-cols-2">
-        {/* Left: Image – hidden on mobile, shown from lg breakpoint */}
-        <div className="hidden lg:flex items-center justify-center bg-gray-950">
-          <img
-            src={login1}
-            alt="Tray of gooey S'mores brownies with toasted marshmallows"
-            className="w-full max-w-3xl h-auto object-cover shadow-2xl shadow-black/60 "
-          />
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-image">
+          <img src={login1} alt="Tray of gooey S'mores brownies with toasted marshmallows" />
         </div>
 
-        {/* Right: Form – always visible, centered */}
-        <div className="flex flex-col items-center justify-start pt-70 lg:pt-30 pb-6">
-          <div className="w-full max-w-md space-y-9 px-6 py-10 sm:px-12 lg:px-16 xl:px-24">
-            <h1 className="text-3xl md:text-4xl  text-center lg:text-left" style={{ fontFamily: 'Kalnia' }}>
-              Login
-            </h1>
+        <div className="login-form-container">
+          <div className="login-form-wrapper">
+            <h1 className="login-title">Login</h1>
 
-            <form className="space-y-8" style={{ fontFamily: 'Kalnia' }}>
-              <div>
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  className="
-                    w-full px-5 py-4 bg-orange-950 border-2 border-orange-900/60
-                    rounded-lg text-white placeholder-white/60 
-                    focus:outline-none focus:border-smores-orange 
-                    focus:ring-2 focus:ring-smores-orange/40 transition
-                  "
-                  placeholder="Email"
-                />
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input id="email" type="email" placeholder="Email" required value={email} onChange={e => setEmail(e.target.value)} />
               </div>
 
-              <div>
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  className="
-                    w-full px-5 py-4 bg-orange-950 border-2 border-orange-900/60
-                    rounded-lg text-white placeholder-white/60 
-                    focus:outline-none focus:border-smores-orange 
-                    focus:ring-2 focus:ring-smores-orange/40 transition
-                  "
-                  placeholder="Password"
-                />
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input id="password" type="password" placeholder="Password" required value={password} onChange={e => setPassword(e.target.value)} />
               </div>
 
-              <button
-                type="submit"
-                className="
-                  w-full py-4 bg-white text-gray-950  
-                  rounded-xl hover:bg-orange-400 transition duration-200
-                  shadow-lg shadow-smores-orange/20
-                "
-              >
-                Login
+              <button type="submit" className="login-button" disabled={loading}>
+                {loading ? 'Logging...' : 'Login'}
               </button>
             </form>
 
-            <p className="text-center text-orange-500 text-sm" style={{ fontFamily: 'Kalnia' }}>
-              Don't have an Account?{' '}
-              <a href="/signup" className="text-smores-orange hover:underline font-medium text-blue-800">
-                Sign Up
-              </a>
+            {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
+
+            <p className="login-footer" style={{ marginBottom: "-1rem" }}>
+              <Link to="/forgot-password">Forgot Password?</Link>
+            </p>
+            <p className="login-footer">
+              Don't have an account? <Link to="/signup">Sign Up</Link>
             </p>
           </div>
         </div>

@@ -1,0 +1,430 @@
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --brand:        #b88d4a;
+  --brand-light:  #d4aa6a;
+  --brand-dim:    rgba(184, 141, 74, 0.12);
+  --dark:         #0f0f0f;
+  --surface:      #1a1a1a;
+  --surface-2:    #242424;
+  --surface-3:    #2e2e2e;
+  --border:       rgba(255,255,255,0.07);
+  --text-primary: #f5f0e8;
+  --text-muted:   #a09080;
+  --radius-sm:    8px;
+  --radius-md:    14px;
+  --radius-lg:    20px;
+  --shadow-card:  0 4px 24px rgba(0,0,0,0.4);
+  --shadow-hover: 0 12px 40px rgba(0,0,0,0.55);
+  --transition:   0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Page ── */
+.cakes-page {
+  background-color: var(--dark);
+  min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-primary);
+}
+
+/* ── Hero ── */
+.cakes-hero {
+  text-align: center;
+  padding: 72px 24px 60px;
+  background: linear-gradient(160deg, #1a1207 0%, #0f0f0f 60%);
+  position: relative;
+  overflow: hidden;
+}
+
+.cakes-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(184,141,74,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cakes-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  position: relative;
+}
+
+.cakes-hero p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  position: relative;
+}
+
+/* ── Layout wrapper ── */
+.cakes-container {
+  display: flex;
+  gap: 28px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 40px 40px 60px;
+  align-items: flex-start;
+}
+
+/* ── Main product area ── */
+.cakes-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Product Grid ── */
+.cakes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 22px;
+}
+
+/* ── Cake Card ── */
+.cake-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+}
+
+.cake-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(184,141,74,0.3);
+}
+
+/* ── Card image ── */
+.cake-image {
+  position: relative;
+  height: 190px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.cake-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+  display: block;
+}
+
+.cake-card:hover .cake-image img {
+  transform: scale(1.07);
+}
+
+/* ── Card body ── */
+.cake-body {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.cake-body h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+.cake-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  flex: 1;
+  margin-bottom: 14px;
+}
+
+.cake-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--brand-light);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* ── Add to Cart Button ── */
+.add-btn {
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.add-btn:hover {
+  background: var(--brand-light);
+  transform: scale(1.04);
+  box-shadow: 0 4px 16px rgba(184,141,74,0.4);
+}
+
+.add-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Cart Sidebar ── */
+.cakes-cart {
+  width: 320px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+}
+
+.cart-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.cart-inner h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-inner h2::before {
+  content: '🛒';
+  font-size: 1rem;
+}
+
+/* ── Empty state ── */
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: 32px 0 16px;
+}
+
+/* ── Cart list ── */
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Cart item ── */
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart-item img {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cart-item .meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item .name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Qty controls ── */
+.qty {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface-3);
+  border-radius: 6px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.qty button {
+  background: transparent;
+  border: none;
+  color: var(--brand-light);
+  width: 26px;
+  height: 26px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.qty button:hover {
+  background: var(--brand-dim);
+}
+
+.qty span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 22px;
+  text-align: center;
+}
+
+.item-price {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--brand-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Cart summary ── */
+.cart-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0 0;
+  margin-top: 4px;
+}
+
+.cart-summary div:first-child {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.summary-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── Cart actions ── */
+.cart-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.checkout {
+  flex: 1;
+  padding: 12px 0;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.checkout:hover {
+  background: var(--brand-light);
+  box-shadow: 0 4px 20px rgba(184,141,74,0.35);
+  transform: translateY(-1px);
+}
+
+.clear {
+  padding: 12px 16px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.clear:hover {
+  color: #e87070;
+  border-color: rgba(232,112,112,0.4);
+  background: rgba(232,112,112,0.06);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .cakes-container {
+    flex-direction: column;
+    padding: 28px 24px 48px;
+  }
+
+  .cakes-cart {
+    width: 100%;
+    position: static;
+  }
+
+  .cart-inner {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 640px) {
+  .cakes-container {
+    padding: 20px 16px 40px;
+    gap: 20px;
+  }
+
+  .cakes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+  }
+
+  .cake-image {
+    height: 150px;
+  }
+
+  .cakes-hero {
+    padding: 52px 20px 44px;
+  }
+}
