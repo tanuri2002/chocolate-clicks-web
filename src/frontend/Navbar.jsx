@@ -49,7 +49,8 @@ export default function Navbar() {
       <div id="main-navigation-links" className={`navbar-links${isOpen ? ' is-open' : ''}`} onClick={() => setOpenPath(null)}>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
-        <Link to="/events">Our-Items</Link>
+        <Link to="/events">Our-Events</Link>
+        <Link to="/items">Our-Items</Link>
         {/* <Link to="/payment">Payments</Link> */}
 
         {admin && <Link to="/dashboard">Dashboard</Link>}

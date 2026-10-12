@@ -29,6 +29,8 @@ import CartDrawer from './frontend/CartDrawer';
 import Checkout from './frontend/Checkout';
 import OrderSuccess from './frontend/OrderSuccess';
 import OrderCancelled from './frontend/OrderCancelled';
+import OurEvents from './frontend/OurEvents';
+import BakeItHappen from './frontend/BakeItHappen';
 
 function App() {
   // ── Cart state: single source of truth ──────────────────────────
@@ -95,7 +97,9 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/events" element={<FoodItems />} />
+          <Route path="/items" element={<FoodItems />} />
+          <Route path="/events" element={<OurEvents />} />
+          <Route path="/bake-it-happen" element={<BakeItHappen />} />
           <Route path="/mask-workshop" element={<MaskWorkshop />} />
           <Route path="/about" element={<About />} />
 
