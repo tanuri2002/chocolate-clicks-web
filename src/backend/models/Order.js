@@ -106,6 +106,12 @@ const orderSchema = new mongoose.Schema(
       default: "pending",
       index: true,
     },
+    status: {
+      type: String,
+      enum: ["Pending", "Processing", "Shipped", "Completed", "Cancelled"],
+      default: "Pending",
+      index: true,
+    },
     payhere: {
       paymentId: { type: String, default: "" },
       statusCode: { type: Number },

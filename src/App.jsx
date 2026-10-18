@@ -14,7 +14,11 @@ import AdminSignUp from "./frontend/AdminSignUp";
 import Payment from "./frontend/Payment";
 import ProtectedAdminRoute from './frontend/ProtectedAdminRoute';
 import AdminDashboard from './frontend/AdminDashboard';
-import Dashboard from './frontend/Dashboard';
+import AdminLayout from './frontend/AdminLayout';
+import DashboardOverview from './frontend/DashboardOverview';
+import OrdersPage from './frontend/OrdersPage';
+import CustomersPlaceholder from './frontend/CustomersPlaceholder';
+import MenuPlaceholder from './frontend/MenuPlaceholder';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
@@ -95,9 +99,20 @@ function App() {
           <Route path="/food" element={<FoodItems />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/items" element={<FoodItems />} />
+          {/* Admin Dashboard with sub-routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedAdminRoute>
+                <AdminLayout />
+              </ProtectedAdminRoute>
+            }
+          >
+            <Route index element={<DashboardOverview />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="customers" element={<CustomersPlaceholder />} />
+            <Route path="menu" element={<MenuPlaceholder />} />
+          </Route>
           <Route path="/events" element={<OurEvents />} />
           <Route path="/bake-it-happen" element={<BakeItHappen />} />
           <Route path="/mask-workshop" element={<MaskWorkshop />} />

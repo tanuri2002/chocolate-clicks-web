@@ -167,6 +167,33 @@ export const getMyOrders = () => {
 };
 
 /**
+ * Get all orders for admin with optional filters & pagination
+ */
+export const getAdminOrders = ({ status = '', search = '', page = 1, limit = 10 } = {}) => {
+  const params = new URLSearchParams();
+  if (status && status !== 'all') params.append('status', status);
+  if (search && search.trim()) params.append('search', search.trim());
+  if (page) params.append('page', page);
+  if (limit) params.append('limit', limit);
+  const queryString = params.toString() ? `?${params.toString()}` : '';
+  return apiCall(`/orders${queryString}`, 'GET');
+};
+
+/**
+ * Get admin orders and customers summary calculated via MongoDB aggregation
+ */
+export const getAdminOrderSummary = () => {
+  return apiCall('/orders/summary', 'GET');
+};
+
+/**
+ * Update order fulfillment status with transition validation
+ */
+export const updateOrderStatus = (orderId, status) => {
+  return apiCall(`/orders/${orderId}/status`, 'PATCH', { status });
+};
+
+/**
  * Forgot password
  */
 export const forgotPassword = (email) => {
