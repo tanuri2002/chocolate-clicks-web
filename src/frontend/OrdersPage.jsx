@@ -11,8 +11,11 @@ import {
   ChevronRight,
   X,
   CreditCard,
+  Star,
+  Check,
+  XCircle,
 } from 'lucide-react';
-import { getAdminOrders, updateOrderStatus } from '../api';
+import { getAdminOrders, updateOrderStatus, decideSpecialOrder } from '../api';
 import { formatLKR } from './DashboardOverview';
 import './Dashboard.css';
 
@@ -27,6 +30,7 @@ const VALID_TRANSITIONS = {
 };
 
 const ALL_STATUSES = ['Pending', 'Processing', 'Shipped', 'Completed', 'Cancelled'];
+const SPECIAL_STATUSES = ['Awaiting Approval', 'Approved', 'Declined', 'Processing', 'Shipped', 'Completed', 'Cancelled'];
 
 /**
  * Format order creation date into human-readable format
@@ -65,7 +69,7 @@ function PaymentBadge({ status }) {
 /**
  * Orders management page (/dashboard/orders)
  * Includes server-side pagination, searching, status filtering,
- * and state transition validation.
+ * type tabs (Normal / Special), and state transition validation.
  */
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -76,12 +80,15 @@ export default function OrdersPage() {
     pages: 1,
   });
 
+  // "normal" or "special" tab
+  const [orderTypeTab, setOrderTypeTab] = useState('normal');
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [decidingId, setDecidingId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [, startTransition] = useTransition();
@@ -96,7 +103,7 @@ export default function OrdersPage() {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  // Fetch orders from server whenever page, status, or search query changes
+  // Fetch orders from server whenever page, status, type, or search query changes
   async function loadOrders(page = pagination.page) {
     setLoading(true);
     setErrorMessage('');
@@ -105,6 +112,7 @@ export default function OrdersPage() {
         page,
         limit: 10,
         status: statusFilter,
+        type: orderTypeTab,
         search: searchQuery,
       });
 
@@ -128,13 +136,12 @@ export default function OrdersPage() {
   useEffect(() => {
     loadOrders(pagination.page);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, statusFilter, searchQuery]);
+  }, [pagination.page, statusFilter, searchQuery, orderTypeTab]);
 
-  // Handle changing status via dropdown
+  // Handle changing status via dropdown (normal orders)
   async function handleStatusChange(orderId, currentStatus, newStatus) {
     if (currentStatus === newStatus) return;
 
-    // Transition validation check on client side
     const allowed = VALID_TRANSITIONS[currentStatus] || [];
     if (!allowed.includes(newStatus)) {
       setErrorMessage(
@@ -149,15 +156,12 @@ export default function OrdersPage() {
 
     try {
       const response = await updateOrderStatus(orderId, newStatus);
-      // Update local state smoothly
       startTransition(() => {
         setOrders((prev) =>
           prev.map((o) => (o._id === orderId ? { ...o, status: response.order?.status || newStatus } : o))
         );
       });
       setSuccessMessage(`Order #${orderId.slice(-6)} status updated to ${newStatus}.`);
-
-      // Auto clear success notice after 3 seconds
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
       console.error('Status update failed:', err);
@@ -165,6 +169,40 @@ export default function OrdersPage() {
     } finally {
       setUpdatingId(null);
     }
+  }
+
+  // Handle Accept / Decline for special orders
+  async function handleSpecialDecision(orderId, decision) {
+    setDecidingId(orderId);
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    try {
+      const response = await decideSpecialOrder(orderId, decision);
+      startTransition(() => {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o._id === orderId
+              ? { ...o, status: response.order?.status || (decision === 'accept' ? 'Approved' : 'Declined') }
+              : o
+          )
+        );
+      });
+      const label = decision === 'accept' ? 'Accepted' : 'Declined';
+      setSuccessMessage(`Special Order #${orderId.slice(-6)} has been ${label}. Email sent to customer.`);
+      setTimeout(() => setSuccessMessage(''), 4000);
+    } catch (err) {
+      console.error('Special order decision failed:', err);
+      setErrorMessage(err.message || 'Failed to process special order decision.');
+    } finally {
+      setDecidingId(null);
+    }
+  }
+
+  function handleTypeTabChange(type) {
+    setOrderTypeTab(type);
+    setStatusFilter('all');
+    setPagination((prev) => ({ ...prev, page: 1 }));
   }
 
   function handleFilterSelect(status) {
@@ -188,6 +226,9 @@ export default function OrdersPage() {
   const startRecord = pagination.total === 0 ? 0 : (pagination.page - 1) * pagination.limit + 1;
   const endRecord = Math.min(pagination.page * pagination.limit, pagination.total);
 
+  const isSpecialTab = orderTypeTab === 'special';
+  const statusList = isSpecialTab ? SPECIAL_STATUSES : ALL_STATUSES;
+
   return (
     <div className="orders-page-container">
       {/* Title & Actions Bar */}
@@ -209,6 +250,24 @@ export default function OrdersPage() {
         >
           <RefreshCw size={15} className={loading ? 'admin-spin-icon' : ''} />
           <span>Refresh</span>
+        </button>
+      </div>
+
+      {/* Order Type Tabs */}
+      <div className="orders-type-tabs">
+        <button
+          className={`orders-type-tab ${orderTypeTab === 'normal' ? 'active' : ''}`}
+          onClick={() => handleTypeTabChange('normal')}
+        >
+          <ShoppingBag size={16} />
+          Normal Orders
+        </button>
+        <button
+          className={`orders-type-tab ${orderTypeTab === 'special' ? 'active' : ''}`}
+          onClick={() => handleTypeTabChange('special')}
+        >
+          <Star size={16} />
+          Special Orders
         </button>
       </div>
 
@@ -266,7 +325,7 @@ export default function OrdersPage() {
           >
             All
           </button>
-          {ALL_STATUSES.map((status) => (
+          {statusList.map((status) => (
             <button
               key={status}
               type="button"
@@ -289,10 +348,12 @@ export default function OrdersPage() {
         ) : orders.length === 0 ? (
           <div className="admin-empty-state">
             <ShoppingBag size={40} className="empty-icon" />
-            <h3>No orders found</h3>
+            <h3>No {isSpecialTab ? 'special ' : ''}orders found</h3>
             <p>
               {searchQuery || statusFilter !== 'all'
                 ? 'Try adjusting your search query or status filter.'
+                : isSpecialTab
+                ? 'No special orders have been placed yet.'
                 : 'There are currently no orders in the database.'}
             </p>
             {(searchQuery || statusFilter !== 'all') && (
@@ -311,9 +372,9 @@ export default function OrdersPage() {
                     <th>Customer</th>
                     <th>Items</th>
                     <th>Total</th>
-                    <th>Payment Status</th>
+                    {!isSpecialTab && <th>Payment Status</th>}
                     <th>Date</th>
-                    <th>Order Status</th>
+                    <th>{isSpecialTab ? 'Status / Action' : 'Order Status'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -326,8 +387,11 @@ export default function OrdersPage() {
                     const customerPhone = order.customer?.phone || '';
 
                     const isUpdating = updatingId === order._id;
+                    const isDeciding = decidingId === order._id;
                     const isTerminal = currentStatus === 'Completed' || currentStatus === 'Cancelled';
                     const allowedStatuses = VALID_TRANSITIONS[currentStatus] || [];
+
+                    const isAwaitingApproval = currentStatus === 'Awaiting Approval';
 
                     // Composed items summary
                     const itemsText = Array.isArray(order.items) && order.items.length > 0
@@ -335,11 +399,13 @@ export default function OrdersPage() {
                       : 'No items recorded';
 
                     return (
-                      <tr key={order._id || order.orderNumber}>
+                      <tr key={order._id || order.orderNumber} className={isSpecialTab ? 'special-order-row' : ''}>
                         {/* Order ID */}
                         <td className="order-id-cell">
                           <span className="order-number-text">{order.orderNumber || order._id}</span>
-                          <span className="order-type-tag">{order.orderType || 'Order'}</span>
+                          <span className={`order-type-tag ${isSpecialTab ? 'order-type-special' : ''}`}>
+                            {isSpecialTab ? 'Special' : (order.orderType || 'Order')}
+                          </span>
                         </td>
 
                         {/* Customer */}
@@ -365,59 +431,96 @@ export default function OrdersPage() {
                           <strong>{formatLKR(order.total)}</strong>
                         </td>
 
-                        {/* Payment Status */}
-                        <td>
-                          <PaymentBadge status={order.paymentStatus} />
-                        </td>
+                        {/* Payment Status (only for normal) */}
+                        {!isSpecialTab && (
+                          <td>
+                            <PaymentBadge status={order.paymentStatus} />
+                          </td>
+                        )}
 
                         {/* Date */}
                         <td className="order-date-cell">
                           {formatDate(order.createdAt)}
                         </td>
 
-                        {/* Status Dropdown with Transition Validation */}
+                        {/* Status / Actions */}
                         <td className="order-status-cell">
-                          <div className="status-dropdown-wrapper">
-                            <select
-                              className={`order-status-select status-${currentStatus.toLowerCase()} ${
-                                isUpdating ? 'status-updating' : ''
-                              }`}
-                              value={currentStatus}
-                              disabled={isUpdating || isTerminal}
-                              title={
-                                isTerminal
-                                  ? `Status "${currentStatus}" is final and cannot be modified.`
-                                  : `Current status: ${currentStatus}`
-                              }
-                              onChange={(e) =>
-                                handleStatusChange(order._id, currentStatus, e.target.value)
-                              }
-                            >
-                              {/* Current status option */}
-                              <option value={currentStatus}>
-                                {currentStatus} (Current)
-                              </option>
+                          {isSpecialTab && isAwaitingApproval ? (
+                            /* Accept / Decline buttons for special orders awaiting approval */
+                            <div className="special-decision-actions">
+                              <span className={`order-status-badge status-awaiting`}>
+                                Awaiting Approval
+                              </span>
+                              <div className="special-decision-btns">
+                                <button
+                                  className="special-accept-btn"
+                                  onClick={() => handleSpecialDecision(order._id, 'accept')}
+                                  disabled={isDeciding}
+                                  title="Accept this special order"
+                                >
+                                  <Check size={14} />
+                                  {isDeciding ? 'Processing...' : 'Accept'}
+                                </button>
+                                <button
+                                  className="special-decline-btn"
+                                  onClick={() => handleSpecialDecision(order._id, 'decline')}
+                                  disabled={isDeciding}
+                                  title="Decline this special order"
+                                >
+                                  <XCircle size={14} />
+                                  {isDeciding ? 'Processing...' : 'Decline'}
+                                </button>
+                              </div>
+                            </div>
+                          ) : isSpecialTab ? (
+                            /* Already decided special orders show a badge */
+                            <span className={`order-status-badge status-${currentStatus.toLowerCase().replace(/\s+/g, '-')}`}>
+                              {currentStatus}
+                            </span>
+                          ) : (
+                            /* Normal order status dropdown */
+                            <div className="status-dropdown-wrapper">
+                              <select
+                                className={`order-status-select status-${currentStatus.toLowerCase()} ${
+                                  isUpdating ? 'status-updating' : ''
+                                }`}
+                                value={currentStatus}
+                                disabled={isUpdating || isTerminal}
+                                title={
+                                  isTerminal
+                                    ? `Status "${currentStatus}" is final and cannot be modified.`
+                                    : `Current status: ${currentStatus}`
+                                }
+                                onChange={(e) =>
+                                  handleStatusChange(order._id, currentStatus, e.target.value)
+                                }
+                              >
+                                {/* Current status option */}
+                                <option value={currentStatus}>
+                                  {currentStatus} (Current)
+                                </option>
 
-                              {/* Allowed transition options */}
-                              {ALL_STATUSES.filter((s) => s !== currentStatus).map((s) => {
-                                const isValid = allowedStatuses.includes(s);
-                                return (
-                                  <option
-                                    key={s}
-                                    value={s}
-                                    disabled={!isValid}
-                                  >
-                                    {s} {!isValid ? '(Invalid)' : ''}
-                                  </option>
-                                );
-                              })}
-                            </select>
+                                {/* Allowed transition options */}
+                                {ALL_STATUSES.filter((s) => s !== currentStatus).map((s) => {
+                                  const isValid = allowedStatuses.includes(s);
+                                  return (
+                                    <option
+                                      key={s}
+                                      value={s}
+                                      disabled={!isValid}
+                                    >
+                                      {s} {!isValid ? '(Invalid)' : ''}
+                                    </option>
+                                  );
+                                })}
+                              </select>
 
-                            {isUpdating && (
-                              <span className="dropdown-spinner" title="Updating status..." />
-                            )}
-                          </div>
-                          {isTerminal && (
+                              {isUpdating && (
+                                <span className="dropdown-spinner" title="Updating status..." />
+                              )}
+                            </div>
+                          )}
+                          {!isSpecialTab && isTerminal && (
                             <span className="terminal-note">Final state</span>
                           )}
                         </td>

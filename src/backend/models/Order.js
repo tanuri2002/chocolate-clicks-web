@@ -20,7 +20,7 @@ const orderItemSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: [1, "Quantity must be at least 1"],
-      max: [20, "Quantity cannot exceed 20"],
+      max: [1000, "Quantity cannot exceed 1000"],
     },
   },
   { _id: false }
@@ -38,6 +38,12 @@ const orderSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      index: true,
+    },
+    type: {
+      type: String,
+      enum: ["normal", "special"],
+      default: "normal",
       index: true,
     },
     items: {
@@ -108,7 +114,16 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Processing", "Shipped", "Completed", "Cancelled"],
+      enum: [
+        "Pending",
+        "Processing",
+        "Shipped",
+        "Completed",
+        "Cancelled",
+        "Awaiting Approval",
+        "Approved",
+        "Declined",
+      ],
       default: "Pending",
       index: true,
     },

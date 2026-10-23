@@ -501,3 +501,29 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Special Order ──────────────────────────────────────────── */
+.checkout-special-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background-color: rgba(201, 139, 59, 0.1);
+  border: 1px solid rgba(201, 139, 59, 0.35);
+  padding: 1rem 1.1rem;
+  border-radius: 0.6rem;
+  margin-top: 1rem;
+  color: #c98b3b;
+}
+
+.checkout-special-notice strong {
+  font-size: 0.9rem;
+  color: #c98b3b;
+}
+
+.checkout-special-order-btn {
+  background: linear-gradient(135deg, #c98b3b 0%, #a87428 100%) !important;
+}
+
+.checkout-special-order-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #db9c48 0%, #c98b3b 100%) !important;
+}

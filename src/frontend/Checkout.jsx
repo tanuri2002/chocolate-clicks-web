@@ -6,7 +6,7 @@ import { getStoredUser, createOrder } from '../api';
 import './Checkout.css';
 
 export default function Checkout() {
-  const { items, totalItems, subtotal, clearCart } = useCart();
+  const { items, totalItems, subtotal, clearCart, isSpecialOrder } = useCart();
   const navigate = useNavigate();
 
   // Redirect if cart is empty
@@ -134,11 +134,17 @@ export default function Checkout() {
     try {
       const res = await createOrder(payload);
 
+      if (res.success && res.type === 'special') {
+        // Special Order: skip PayHere, show confirmation
+        clearCart();
+        navigate(`/order/success?orderId=${res.orderId}&special=true`);
+        return;
+      }
+
       if (res.success && res.actionUrl && res.params) {
-        // Clear the cart on successful order placement
+        // Normal Order: redirect to PayHere
         clearCart();
 
-        // Create and auto-submit a hidden form to PayHere checkout
         const formEl = document.createElement('form');
         formEl.setAttribute('method', 'POST');
         formEl.setAttribute('action', res.actionUrl);
@@ -155,7 +161,7 @@ export default function Checkout() {
         document.body.appendChild(formEl);
         formEl.submit();
       } else {
-        throw new Error(res.message || 'Failed to initialize PayHere checkout.');
+        throw new Error(res.message || 'Failed to initialize checkout.');
       }
     } catch (err) {
       console.error('Order creation failed:', err);
@@ -389,16 +395,31 @@ export default function Checkout() {
                 </div>
               </div>
 
+              {/* Special Order Notice */}
+              {isSpecialOrder && (
+                <div className="checkout-special-notice" role="alert">
+                  <AlertCircle size={18} />
+                  <div>
+                    <strong>Special Order</strong>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#d1d5db' }}>
+                      One or more items exceed the regular order limit. This order will skip payment and be submitted for the owner's review. You'll receive an email once it's accepted or declined.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Submit Button for Mobile / End of Form */}
               <div className="checkout-submit-wrap">
                 <button
                   type="submit"
-                  className="checkout-place-order-btn"
+                  className={`checkout-place-order-btn ${isSpecialOrder ? 'checkout-special-order-btn' : ''}`}
                   disabled={submitting}
                 >
                   {submitting
-                    ? 'Connecting to PayHere...'
-                    : `Pay with PayHere • LKR ${subtotal.toLocaleString()}`}
+                    ? (isSpecialOrder ? 'Submitting Special Order...' : 'Connecting to PayHere...')
+                    : (isSpecialOrder
+                        ? `Submit Special Order • LKR ${subtotal.toLocaleString()}`
+                        : `Pay with PayHere • LKR ${subtotal.toLocaleString()}`)}
                 </button>
               </div>
             </form>

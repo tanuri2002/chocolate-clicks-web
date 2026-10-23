@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
+import { X, Plus, Minus, Trash2, ShoppingBag, AlertCircle } from 'lucide-react';
 import { useCart } from './context/CartContext';
 import './CartDrawer.css';
 
@@ -9,6 +9,8 @@ export default function CartDrawer() {
     items,
     totalItems,
     subtotal,
+    isSpecialOrder,
+    specialItems,
     removeItem,
     updateQuantity,
     isCartOpen,
@@ -89,10 +91,20 @@ export default function CartDrawer() {
           </div>
         ) : (
           <div className="cart-drawer-items">
+            {isSpecialOrder && (
+              <div className="cart-drawer-special-banner" role="alert">
+                <AlertCircle size={18} className="cart-drawer-special-icon" />
+                <div className="cart-drawer-special-text">
+                  Orders above {specialItems[0]?.maxPerOrder || 10} of an item are special orders. The owner will review your request and email you if it's accepted.
+                </div>
+              </div>
+            )}
+
             {items.map((item) => {
               const lineTotal = item.price * item.quantity;
+              const isItemSpecial = item.quantity > (item.maxPerOrder || 10);
               return (
-                <div key={item.id} className="cart-drawer-item">
+                <div key={item.id} className={`cart-drawer-item ${isItemSpecial ? 'cart-drawer-item-special' : ''}`}>
                   <div className="cart-drawer-item-img-wrap">
                     {item.imageUrl ? (
                       <img src={item.imageUrl} alt={item.name} />
@@ -103,7 +115,14 @@ export default function CartDrawer() {
 
                   <div className="cart-drawer-item-details">
                     <div className="cart-drawer-item-top">
-                      <h4 className="cart-drawer-item-name">{item.name}</h4>
+                      <div>
+                        <h4 className="cart-drawer-item-name">{item.name}</h4>
+                        {isItemSpecial && (
+                          <span className="cart-drawer-item-special-tag">
+                            Special Order ({item.quantity} &gt; {item.maxPerOrder || 10})
+                          </span>
+                        )}
+                      </div>
                       <button
                         type="button"
                         className="cart-drawer-remove-btn"
@@ -160,15 +179,19 @@ export default function CartDrawer() {
               </span>
             </div>
 
-            <p className="cart-drawer-note">Taxes and delivery calculated at checkout.</p>
+            <p className="cart-drawer-note">
+              {isSpecialOrder
+                ? 'Special order: skips immediate payment and awaits approval.'
+                : 'Taxes and delivery calculated at checkout.'}
+            </p>
 
             <button
               type="button"
-              className="cart-drawer-checkout-btn"
+              className={`cart-drawer-checkout-btn ${isSpecialOrder ? 'cart-drawer-special-btn' : ''}`}
               onClick={handleCheckout}
               disabled={items.length === 0}
             >
-              Proceed to Checkout
+              {isSpecialOrder ? 'Proceed to Special Order Request' : 'Proceed to Checkout'}
             </button>
 
             <button

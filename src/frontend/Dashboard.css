@@ -1671,3 +1671,162 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ────────────────────────────────────────────────────────────────
+   Special Orders – Type Tabs & Decision Actions
+   ──────────────────────────────────────────────────────────────── */
+.orders-type-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.orders-type-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #9ca3af;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orders-type-tab:hover {
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #e5e7eb;
+}
+
+.orders-type-tab.active {
+  background-color: rgba(201, 139, 59, 0.15);
+  color: #c98b3b;
+  border-color: rgba(201, 139, 59, 0.4);
+  font-weight: 600;
+}
+
+/* Special order type tag */
+.order-type-special {
+  background-color: rgba(201, 139, 59, 0.15) !important;
+  color: #c98b3b !important;
+  border-color: rgba(201, 139, 59, 0.35) !important;
+}
+
+/* Special order row highlight */
+.special-order-row {
+  border-left: 3px solid rgba(201, 139, 59, 0.4);
+}
+
+/* Decision buttons area */
+.special-decision-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.special-decision-btns {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.special-accept-btn,
+.special-decline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.special-accept-btn {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.special-accept-btn:hover:not(:disabled) {
+  background-color: rgba(34, 197, 94, 0.25);
+}
+
+.special-decline-btn {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.special-decline-btn:hover:not(:disabled) {
+  background-color: rgba(239, 68, 68, 0.25);
+}
+
+.special-accept-btn:disabled,
+.special-decline-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Status badges for special orders */
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-awaiting {
+  background-color: rgba(245, 158, 11, 0.18);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.status-awaiting-approval {
+  background-color: rgba(245, 158, 11, 0.18);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.status-approved {
+  background-color: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.status-declined {
+  background-color: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.status-processing {
+  background-color: rgba(250, 204, 21, 0.18);
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+}
+
+.status-shipped {
+  background-color: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.status-completed {
+  background-color: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.status-cancelled {
+  background-color: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+

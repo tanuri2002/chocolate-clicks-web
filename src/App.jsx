@@ -18,7 +18,7 @@ import AdminLayout from './frontend/AdminLayout';
 import DashboardOverview from './frontend/DashboardOverview';
 import OrdersPage from './frontend/OrdersPage';
 import CustomersPlaceholder from './frontend/CustomersPlaceholder';
-import MenuPlaceholder from './frontend/MenuPlaceholder';
+import MenuManagement from './frontend/MenuManagement';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
@@ -97,6 +97,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/food" element={<FoodItems />} />
+          <Route path="/items" element={<FoodItems />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           {/* Admin Dashboard with sub-routes */}
@@ -111,7 +112,7 @@ function App() {
             <Route index element={<DashboardOverview />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="customers" element={<CustomersPlaceholder />} />
-            <Route path="menu" element={<MenuPlaceholder />} />
+            <Route path="menu" element={<MenuManagement />} />
           </Route>
           <Route path="/events" element={<OurEvents />} />
           <Route path="/bake-it-happen" element={<BakeItHappen />} />

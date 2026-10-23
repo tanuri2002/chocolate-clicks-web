@@ -18,42 +18,58 @@ const CATEGORY_META = [
 
 // ── Per-card component ────────────────────────────────────────────────────
 function MenuItemCard({ item }) {
-  const { addItem } = useCart();
+  const { addItem, cart } = useCart();
   const [added, setAdded] = useState(false);
 
+  const cartQty = cart[item._id]?.quantity || 0;
+  const maxPerOrder = typeof item.maxPerOrder === 'number' && item.maxPerOrder > 0 ? item.maxPerOrder : 10;
+  const isSpecial = cartQty > maxPerOrder;
+
   function handleAdd() {
-    if (!item.inStock) return;
+    if (item.inStock === false || item.isActive === false) return;
     addItem({
       _id: item._id,         // real MongoDB ObjectId string
       name: item.name,
       price: item.price,     // Number from the API
       imageUrl: item.imageUrl ?? '',
-      inStock: item.inStock,
+      inStock: item.inStock !== false,
+      maxPerOrder,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 1000);
   }
 
   return (
-    <div className="menu-card">
+    <div className={`menu-card ${isSpecial ? 'menu-card-special-order' : ''}`}>
       <div className="menu-card-image-wrap">
         {item.imageUrl
           ? <img src={item.imageUrl} alt={item.name} />
           : <div className="menu-card-img-placeholder" aria-hidden="true" />}
         {!item.inStock && <span className="sold-out-badge">Sold Out</span>}
+        {isSpecial && <span className="special-order-badge">Special Order ({cartQty})</span>}
       </div>
       <div className="menu-card-body">
         <h3 className="menu-card-name">{item.name}</h3>
         <p className="menu-card-desc">{item.description}</p>
+
+        {isSpecial && (
+          <div className="menu-card-special-notice" role="alert">
+            Orders above {maxPerOrder} of an item are special orders. The owner will review your request and email you if it's accepted.
+          </div>
+        )}
+
         <div className="menu-card-footer">
-          <span className="menu-card-price">LKR {item.price.toLocaleString()}</span>
+          <div className="menu-card-price-wrap">
+            <span className="menu-card-price">LKR {item.price.toLocaleString()}</span>
+            <span className="menu-card-max-note">Max: {maxPerOrder}/order</span>
+          </div>
           <button
             className="menu-add-btn"
-            disabled={!item.inStock}
+            disabled={item.inStock === false || item.isActive === false}
             onClick={handleAdd}
             aria-label={!item.inStock ? 'Sold out' : `Add ${item.name} to cart`}
           >
-            {!item.inStock ? 'Sold Out' : added ? 'Added ✓' : 'Add to Cart'}
+            {item.inStock === false || item.isActive === false ? 'Sold Out' : added ? 'Added ✓' : 'Add to Cart'}
           </button>
         </div>
       </div>
@@ -63,6 +79,7 @@ function MenuItemCard({ item }) {
 
 // ── Main page ─────────────────────────────────────────────────────────────
 export default function FoodItems() {
+  const { isSpecialOrder } = useCart();
   // itemsByCategory: Map<categoryName, item[]>
   const [itemsByCategory, setItemsByCategory] = useState(new Map());
   const [loading, setLoading] = useState(true);
@@ -155,6 +172,14 @@ export default function FoodItems() {
       <section className="menu-hero">
         <h1>Our Menu</h1>
         <p>Freshly baked cakes, brownies and cookies made with premium chocolate.</p>
+        {isSpecialOrder && (
+          <div className="menu-special-order-banner" role="alert">
+            <span className="banner-icon">ℹ️</span>
+            <span>
+              <strong>Special Order Notice:</strong> One or more items in your cart exceed the regular order limit. The owner will review your request and email you if it's accepted.
+            </span>
+          </div>
+        )}
       </section>
 
       {/* Sticky category nav */}

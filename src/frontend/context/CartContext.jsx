@@ -4,19 +4,15 @@ import React, { createContext, useContext, useReducer, useEffect, useState } fro
 const STORAGE_KEY = 'cc_cart_v2';
 
 // ── Shape helpers ──────────────────────────────────────────────────────────
-// Cart state: { [id]: { id, name, price, imageUrl, quantity } }
-// We use an object keyed by id for O(1) lookup.
+// Cart state: { [id]: { id, name, price, imageUrl, quantity, maxPerOrder } }
 
 function loadCart() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    // Must be a plain object (not array, null, etc.)
     if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) return {};
 
-    // Drop any entry that lacks a valid id, name, or numeric price.
-    // This gracefully removes old slug__name entries and any other stale shapes.
     const clean = {};
     for (const [key, entry] of Object.entries(parsed)) {
       const OBJECT_ID_RE = /^[a-f0-9]{24}$/i;
@@ -27,9 +23,11 @@ function loadCart() {
         typeof entry.price === 'number' && isFinite(entry.price) &&
         typeof entry.quantity === 'number' && entry.quantity > 0
       ) {
-        clean[key] = entry;
+        clean[key] = {
+          ...entry,
+          maxPerOrder: typeof entry.maxPerOrder === 'number' && entry.maxPerOrder > 0 ? entry.maxPerOrder : 10,
+        };
       }
-      // else: silently drop malformed / stale entries
     }
     return clean;
   } catch {
@@ -41,7 +39,7 @@ function saveCart(cart) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
   } catch {
-    // Silently swallow storage errors (e.g. private-browsing quota)
+    // Silently swallow storage errors
   }
 }
 
@@ -51,11 +49,19 @@ function cartReducer(state, action) {
     case 'ADD_ITEM': {
       const { item } = action;
       const existing = state[item.id];
+      const maxPerOrder = item.maxPerOrder || existing?.maxPerOrder || 10;
       return {
         ...state,
         [item.id]: existing
-          ? { ...existing, quantity: existing.quantity + 1 }
-          : { id: item.id, name: item.name, price: item.price, imageUrl: item.imageUrl ?? '', quantity: 1 },
+          ? { ...existing, quantity: existing.quantity + 1, maxPerOrder }
+          : {
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              imageUrl: item.imageUrl ?? '',
+              maxPerOrder,
+              quantity: 1,
+            },
       };
     }
     case 'REMOVE_ITEM': {
@@ -98,11 +104,10 @@ export function CartProvider({ children }) {
   // ── Public API ─────────────────────────────────────────────────────────
   /**
    * Add a menu item to the cart.
-   * Refuses items where inStock === false.
-   * @param {{ _id: string, name: string, price: number, imageUrl?: string, inStock: boolean }} menuItem
+   * Refuses items where inStock === false or isActive === false.
    */
   function addItem(menuItem) {
-    if (!menuItem.inStock) return; // Guard: out-of-stock items must not be added
+    if (menuItem.inStock === false || menuItem.isActive === false) return;
     dispatch({
       type: 'ADD_ITEM',
       item: {
@@ -110,6 +115,7 @@ export function CartProvider({ children }) {
         name: menuItem.name,
         price: menuItem.price,
         imageUrl: menuItem.imageUrl ?? '',
+        maxPerOrder: typeof menuItem.maxPerOrder === 'number' && menuItem.maxPerOrder > 0 ? menuItem.maxPerOrder : 10,
       },
     });
   }
@@ -127,9 +133,13 @@ export function CartProvider({ children }) {
   }
 
   // ── Derived values ──────────────────────────────────────────────────────
-  const items = Object.values(cart); // array form for easy iteration
+  const items = Object.values(cart);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Special order detection: true if any item's quantity exceeds its maxPerOrder
+  const specialItems = items.filter((item) => item.quantity > (item.maxPerOrder || 10));
+  const isSpecialOrder = specialItems.length > 0;
 
   return (
     <CartContext.Provider
@@ -138,6 +148,8 @@ export function CartProvider({ children }) {
         items,
         totalItems,
         subtotal,
+        isSpecialOrder,
+        specialItems,
         addItem,
         removeItem,
         updateQuantity,
