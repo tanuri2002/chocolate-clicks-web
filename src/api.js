@@ -99,7 +99,11 @@ export const getStoredUser = () => {
   return user ? JSON.parse(user) : null;
 };
 
-export const getWorkshops = (period = 'upcoming') => apiCall(`/workshops?period=${period}`, 'GET');
+export const getWorkshops = (period = 'upcoming', category = '') => {
+  const params = new URLSearchParams({ period });
+  if (category) params.append('category', category);
+  return apiCall(`/workshops?${params.toString()}`, 'GET');
+};
 export const getWorkshop = (id) => apiCall(`/workshops/${id}`, 'GET');
 export const getAdminWorkshops = () => apiCall('/workshops/admin', 'GET');
 export const createWorkshop = (formData) => apiFormCall('/workshops', 'POST', formData);
@@ -107,6 +111,10 @@ export const updateWorkshopCapacity = (id, capacity) => apiCall(`/workshops/${id
 export const registerForWorkshop = (id, registration) => apiCall(`/workshops/${id}/registrations`, 'POST', registration);
 export const getWorkshopRegistrations = (id) => apiCall(`/workshops/${id}/registrations`, 'GET');
 export const getAdminStats = () => apiCall('/admin/stats', 'GET');
+export const getEventCategories = () => apiCall('/workshops/categories', 'GET');
+export const createEventCategory = (categoryData) => apiCall('/workshops/categories', 'POST', categoryData);
+export const deleteEventCategory = (id) => apiCall(`/workshops/categories/${id}`, 'DELETE');
+
 
 /**
  * Check if the logged in user is an admin

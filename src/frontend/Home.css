@@ -462,3 +462,40 @@
     font-size: 2rem;
   }
 }
+
+/* Scroll Fade-In Animation - Slower, ultra-smooth & cinematic (+1s slower) */
+.scroll-fade {
+  opacity: 0;
+  transform: translateY(35px);
+  filter: blur(4px);
+  transition: opacity 3.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 3.2s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 3.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+
+.scroll-fade.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0px);
+}
+
+.scroll-fade p {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
+              transform 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+}
+
+.scroll-fade.is-visible p {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-2-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}

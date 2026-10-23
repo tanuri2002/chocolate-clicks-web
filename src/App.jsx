@@ -110,6 +110,7 @@ function App() {
           >
             <Route index element={<DashboardOverview />} />
             <Route path="orders" element={<OrdersPage />} />
+            <Route path="events" element={<AdminDashboard />} />
             <Route path="customers" element={<CustomersPlaceholder />} />
             <Route path="menu" element={<MenuPlaceholder />} />
           </Route>

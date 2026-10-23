@@ -14,6 +14,13 @@ const workshopSchema = new mongoose.Schema(
       default: null,
     },
     isPublished: { type: Boolean, default: true, index: true },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "Sri Lankan Wes Mask Painting",
+      index: true,
+    },
   },
   { timestamps: true }
 );

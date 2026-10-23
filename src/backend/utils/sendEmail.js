@@ -1,6 +1,20 @@
-const nodemailer = require("nodemailer");
+let nodemailer;
+try {
+  nodemailer = require("nodemailer");
+} catch {
+  // nodemailer will be loaded on demand if installed
+}
 
 const sendEmail = async (options) => {
+  if (!nodemailer) {
+    try {
+      nodemailer = require("nodemailer");
+    } catch {
+      console.warn("nodemailer not installed. Skipping email to:", options.email);
+      return;
+    }
+  }
+
   // Create a transporter
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
