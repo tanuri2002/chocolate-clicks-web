@@ -71,7 +71,10 @@ export default function MenuManagement() {
   // Open "Add Item" Modal
   function handleOpenAddModal() {
     setEditingItem(null);
-    setForm(DEFAULT_FORM);
+    setForm({
+      ...DEFAULT_FORM,
+      category: MENU_CATEGORIES[0] || 'Chocolate Cakes',
+    });
     setImageFile(null);
     setImagePreview('');
     setFormError('');
@@ -221,6 +224,13 @@ export default function MenuManagement() {
     }
   }
 
+  // Derive all active categories: predefined MENU_CATEGORIES plus any existing categories from DB items
+  const itemCategories = [...new Set(items.map((i) => i.category).filter(Boolean))];
+  const allCategories = [
+    ...MENU_CATEGORIES,
+    ...itemCategories.filter((c) => !MENU_CATEGORIES.includes(c)),
+  ];
+
   // Filter items by category
   const filteredItems = selectedCategory === 'All'
     ? items
@@ -228,7 +238,7 @@ export default function MenuManagement() {
 
   // Group items under category headings
   const categoriesToDisplay = selectedCategory === 'All'
-    ? MENU_CATEGORIES
+    ? allCategories
     : [selectedCategory];
 
   return (
@@ -299,8 +309,9 @@ export default function MenuManagement() {
           >
             All ({items.length})
           </button>
-          {MENU_CATEGORIES.map((cat) => {
+          {allCategories.map((cat) => {
             const count = items.filter((i) => i.category === cat).length;
+            if (count === 0 && !MENU_CATEGORIES.includes(cat)) return null;
             return (
               <button
                 key={cat}
@@ -556,7 +567,7 @@ export default function MenuManagement() {
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
                     className="admin-modal-select"
                   >
-                    {MENU_CATEGORIES.map((cat) => (
+                    {allCategories.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>

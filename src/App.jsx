@@ -100,6 +100,40 @@ function App() {
           <Route path="/items" element={<FoodItems />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedUserRoute>
+                <Profile />
+              </ProtectedUserRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedUserRoute>
+                <Checkout />
+              </ProtectedUserRoute>
+            }
+          />
+          <Route
+            path="/order/success"
+            element={
+              <ProtectedUserRoute>
+                <OrderSuccess />
+              </ProtectedUserRoute>
+            }
+          />
+          <Route
+            path="/order/cancelled"
+            element={
+              <ProtectedUserRoute>
+                <OrderCancelled />
+              </ProtectedUserRoute>
+            }
+          />
           {/* Admin Dashboard with sub-routes */}
           <Route
             path="/dashboard"
