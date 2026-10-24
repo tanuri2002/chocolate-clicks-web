@@ -35,20 +35,10 @@ const menuSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    maxPerOrder: {
-      type: Number,
-      default: 10,
-      min: [1, "Max per order must be at least 1"],
-    },
     isActive: {
       type: Boolean,
       default: true,
       index: true,
-    },
-    // Maintained for Flutter mobile app backward-compatibility
-    inStock: {
-      type: Boolean,
-      default: true,
     },
   },
   { timestamps: true }

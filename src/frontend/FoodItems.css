@@ -187,19 +187,6 @@
   display: block;
 }
 
-.sold-out-badge {
-  position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
-  border: 1px solid #c98b3b;
-  color: #c98b3b;
-  background-color: rgba(15, 15, 15, 0.85);
-  font-size: 0.6rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-}
 
 /* Shown when an item has no imageUrl */
 .menu-card-img-placeholder {
@@ -293,62 +280,5 @@
   .menu-hero h1 {
     font-size: 2.1rem;
   }
-}
-
-/* Special Order Enhancements */
-.menu-special-order-banner {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background-color: rgba(201, 139, 59, 0.15);
-  border: 1px solid rgba(201, 139, 59, 0.4);
-  color: #f3f4f6;
-  padding: 0.85rem 1.25rem;
-  border-radius: 0.75rem;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  line-height: 1.45;
-  text-align: left;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.menu-card-special-order {
-  border-color: rgba(201, 139, 59, 0.5) !important;
-  box-shadow: 0 0 12px rgba(201, 139, 59, 0.2);
-}
-
-.special-order-badge {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  background-color: #c98b3b;
-  color: #121212;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-.menu-card-special-notice {
-  font-size: 0.75rem;
-  color: #f59e0b;
-  background-color: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  padding: 0.45rem 0.65rem;
-  border-radius: 0.4rem;
-  margin-bottom: 0.75rem;
-  line-height: 1.35;
-}
-
-.menu-card-price-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.menu-card-max-note {
-  font-size: 0.7rem;
-  color: #888;
 }
 

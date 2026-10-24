@@ -21,7 +21,6 @@ const DEFAULT_FORM = {
   category: MENU_CATEGORIES[0],
   description: '',
   price: '',
-  maxPerOrder: 10,
   isActive: true,
 };
 
@@ -89,7 +88,6 @@ export default function MenuManagement() {
       category: item.category || MENU_CATEGORIES[0],
       description: item.description || '',
       price: item.price !== undefined ? String(item.price) : '',
-      maxPerOrder: item.maxPerOrder !== undefined ? item.maxPerOrder : 10,
       isActive: item.isActive !== false,
     });
     setImageFile(null);
@@ -158,12 +156,6 @@ export default function MenuManagement() {
       return;
     }
 
-    const numMax = Number(form.maxPerOrder);
-    if (isNaN(numMax) || numMax < 1) {
-      setFormError('Max per order must be at least 1.');
-      return;
-    }
-
     // Creating requires image
     if (!editingItem && !imageFile) {
       setFormError('An image is required when creating a new menu item.');
@@ -175,7 +167,6 @@ export default function MenuManagement() {
     formData.append('category', form.category);
     formData.append('description', form.description.trim());
     formData.append('price', numPrice);
-    formData.append('maxPerOrder', numMax);
     formData.append('isActive', form.isActive);
 
     if (imageFile) {
@@ -417,11 +408,6 @@ export default function MenuManagement() {
                           {item.description || 'No description provided.'}
                         </p>
 
-                        <div className="menu-mgmt-card-meta">
-                          <span className="menu-mgmt-meta-pill">
-                            Max / Order: {item.maxPerOrder || 10}
-                          </span>
-                        </div>
 
                         {/* Actions */}
                         <div className="menu-mgmt-card-actions">
@@ -593,24 +579,6 @@ export default function MenuManagement() {
                 </div>
               </div>
 
-              {/* Max Per Order */}
-              <div className="admin-modal-field">
-                <label htmlFor="itemMaxPerOrder" className="admin-modal-label">
-                  Max Quantity Per Order (Default: 10)
-                </label>
-                <input
-                  id="itemMaxPerOrder"
-                  type="number"
-                  min="1"
-                  max="1000"
-                  value={form.maxPerOrder}
-                  onChange={(e) => setForm({ ...form, maxPerOrder: e.target.value })}
-                  className="admin-modal-input"
-                />
-                <span className="admin-modal-hint">
-                  Orders exceeding this quantity will automatically become special orders requiring owner approval.
-                </span>
-              </div>
 
               {/* Description */}
               <div className="admin-modal-field">

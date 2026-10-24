@@ -40,12 +40,6 @@ const orderSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
-    type: {
-      type: String,
-      enum: ["normal", "special"],
-      default: "normal",
-      index: true,
-    },
     items: {
       type: [orderItemSchema],
       required: true,
@@ -120,9 +114,6 @@ const orderSchema = new mongoose.Schema(
         "Shipped",
         "Completed",
         "Cancelled",
-        "Awaiting Approval",
-        "Approved",
-        "Declined",
       ],
       default: "Pending",
       index: true,

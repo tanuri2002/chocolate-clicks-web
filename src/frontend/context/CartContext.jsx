@@ -4,7 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect, useState } fro
 const STORAGE_KEY = 'cc_cart_v2';
 
 // ── Shape helpers ──────────────────────────────────────────────────────────
-// Cart state: { [id]: { id, name, price, imageUrl, quantity, maxPerOrder } }
+// Cart state: { [id]: { id, name, price, imageUrl, quantity } }
 
 function loadCart() {
   try {
@@ -24,8 +24,11 @@ function loadCart() {
         typeof entry.quantity === 'number' && entry.quantity > 0
       ) {
         clean[key] = {
-          ...entry,
-          maxPerOrder: typeof entry.maxPerOrder === 'number' && entry.maxPerOrder > 0 ? entry.maxPerOrder : 10,
+          id: entry.id,
+          name: entry.name,
+          price: entry.price,
+          imageUrl: entry.imageUrl ?? '',
+          quantity: entry.quantity,
         };
       }
     }
@@ -49,17 +52,15 @@ function cartReducer(state, action) {
     case 'ADD_ITEM': {
       const { item } = action;
       const existing = state[item.id];
-      const maxPerOrder = item.maxPerOrder || existing?.maxPerOrder || 10;
       return {
         ...state,
         [item.id]: existing
-          ? { ...existing, quantity: existing.quantity + 1, maxPerOrder }
+          ? { ...existing, quantity: existing.quantity + 1 }
           : {
               id: item.id,
               name: item.name,
               price: item.price,
               imageUrl: item.imageUrl ?? '',
-              maxPerOrder,
               quantity: 1,
             },
       };
@@ -104,10 +105,10 @@ export function CartProvider({ children }) {
   // ── Public API ─────────────────────────────────────────────────────────
   /**
    * Add a menu item to the cart.
-   * Refuses items where inStock === false or isActive === false.
+   * Refuses items where isActive === false.
    */
   function addItem(menuItem) {
-    if (menuItem.inStock === false || menuItem.isActive === false) return;
+    if (menuItem.isActive === false) return;
     dispatch({
       type: 'ADD_ITEM',
       item: {
@@ -115,7 +116,6 @@ export function CartProvider({ children }) {
         name: menuItem.name,
         price: menuItem.price,
         imageUrl: menuItem.imageUrl ?? '',
-        maxPerOrder: typeof menuItem.maxPerOrder === 'number' && menuItem.maxPerOrder > 0 ? menuItem.maxPerOrder : 10,
       },
     });
   }
@@ -137,10 +137,6 @@ export function CartProvider({ children }) {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Special order detection: true if any item's quantity exceeds its maxPerOrder
-  const specialItems = items.filter((item) => item.quantity > (item.maxPerOrder || 10));
-  const isSpecialOrder = specialItems.length > 0;
-
   return (
     <CartContext.Provider
       value={{
@@ -148,8 +144,6 @@ export function CartProvider({ children }) {
         items,
         totalItems,
         subtotal,
-        isSpecialOrder,
-        specialItems,
         addItem,
         removeItem,
         updateQuantity,

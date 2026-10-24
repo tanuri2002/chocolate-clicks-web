@@ -56,7 +56,7 @@ router.post(
   handleUpload,
   async (req, res) => {
     try {
-      const { name, category, description, price, maxPerOrder, isActive } = req.body;
+      const { name, category, description, price, isActive } = req.body;
 
       // 1. Validate required fields
       if (!name || !name.trim()) {
@@ -89,15 +89,6 @@ router.post(
       const imageUrl = req.file.path || req.file.secure_url;
       const imagePublicId = req.file.filename || req.file.public_id || "";
 
-      // 3. Optional fields
-      let parsedMaxPerOrder = 10;
-      if (maxPerOrder !== undefined && maxPerOrder !== "") {
-        const val = Number(maxPerOrder);
-        if (!isNaN(val) && val >= 1) {
-          parsedMaxPerOrder = Math.floor(val);
-        }
-      }
-
       const activeStatus =
         isActive === undefined
           ? true
@@ -110,9 +101,7 @@ router.post(
         price: parsedPrice,
         imageUrl,
         imagePublicId,
-        maxPerOrder: parsedMaxPerOrder,
         isActive: activeStatus,
-        inStock: activeStatus, // Flutter app compatibility
       });
 
       // TODO: later: email signed-up users about the new item
@@ -140,7 +129,7 @@ router.put(
         return res.status(404).json({ success: false, message: "Menu item not found" });
       }
 
-      const { name, category, description, price, maxPerOrder, isActive } = req.body;
+      const { name, category, description, price, isActive } = req.body;
 
       if (name !== undefined) {
         if (!name.trim()) {
@@ -174,18 +163,11 @@ router.put(
         item.price = parsedPrice;
       }
 
-      if (maxPerOrder !== undefined && maxPerOrder !== "") {
-        const val = Number(maxPerOrder);
-        if (!isNaN(val) && val >= 1) {
-          item.maxPerOrder = Math.floor(val);
-        }
-      }
 
       if (isActive !== undefined) {
         const activeStatus =
           isActive === true || isActive === "true" || isActive === 1 || isActive === "1";
         item.isActive = activeStatus;
-        item.inStock = activeStatus;
       }
 
       // If a new image was uploaded, delete the old Cloudinary image and assign new image

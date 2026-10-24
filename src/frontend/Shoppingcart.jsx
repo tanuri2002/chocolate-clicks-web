@@ -68,7 +68,6 @@ export default function ShoppingCart({ cart = {}, onUpdateQty, onRemove }) {
                       <div>
                         <h3 className="sc-item-name">{item.name}</h3>
                         <p className="sc-item-desc">{item.desc}</p>
-                        <span className="sc-in-stock">✓ In Stock</span>
                       </div>
                       <button
                         className="sc-remove"

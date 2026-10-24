@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Clock, XCircle, ShoppingBag, ArrowRight, Star } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, ArrowRight } from 'lucide-react';
 import { getOrderById } from '../api';
 import './OrderSuccess.css';
 
 export default function OrderSuccess() {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
-  const isSpecial = searchParams.get('special') === 'true';
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +20,7 @@ export default function OrderSuccess() {
     }
 
     let attempts = 0;
-    const MAX_POLLS = isSpecial ? 1 : 6; // Special orders: just fetch once
+    const MAX_POLLS = 6;
     let timer;
 
     async function fetchOrder() {
@@ -29,10 +28,7 @@ export default function OrderSuccess() {
         const res = await getOrderById(orderId);
         if (res.success && res.order) {
           setOrder(res.order);
-          // Special orders don't need payment polling
-          if (isSpecial) {
-            setLoading(false);
-          } else if (res.order.paymentStatus === 'pending' && attempts < MAX_POLLS) {
+          if (res.order.paymentStatus === 'pending' && attempts < MAX_POLLS) {
             attempts++;
             timer = setTimeout(fetchOrder, 2000);
           } else {
@@ -49,7 +45,7 @@ export default function OrderSuccess() {
 
     fetchOrder();
     return () => clearTimeout(timer);
-  }, [orderId, isSpecial]);
+  }, [orderId]);
 
   return (
     <div className="order-result-page">
@@ -77,71 +73,8 @@ export default function OrderSuccess() {
 
         {!loading && !error && order && (
           <>
-            {/* Special Order Confirmation */}
-            {isSpecial && (
-              <div className="order-result-card order-result-special">
-                <Star size={64} className="order-result-icon order-result-icon-special" />
-                <h1 className="order-result-title">Special Order Submitted!</h1>
-                <p className="order-result-subtitle">
-                  Thank you, <strong>{order.customer?.firstName}</strong>! Your special order has
-                  been submitted for review. The owner will review your order and you'll receive an
-                  email once it's accepted or declined.
-                </p>
-
-                <div className="order-result-details">
-                  <div className="order-result-detail-row">
-                    <span>Order Number</span>
-                    <span className="order-result-highlight">{order.orderNumber}</span>
-                  </div>
-                  <div className="order-result-detail-row">
-                    <span>Status</span>
-                    <span className="order-result-highlight" style={{ color: '#f59e0b' }}>
-                      Awaiting Approval
-                    </span>
-                  </div>
-                  <div className="order-result-detail-row">
-                    <span>Estimated Total</span>
-                    <span className="order-result-highlight">
-                      {order.currency} {Number(order.total).toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="order-result-detail-row">
-                    <span>Fulfillment</span>
-                    <span>{order.orderType === 'pickup' ? 'Store Pickup' : 'Delivery'}</span>
-                  </div>
-                </div>
-
-                <div className="order-result-items">
-                  <h3>Items Ordered</h3>
-                  {order.items.map((item, i) => (
-                    <div key={i} className="order-result-item-row">
-                      <span className="order-result-item-name">
-                        {item.name} <span className="order-result-item-qty">x{item.quantity}</span>
-                      </span>
-                      <span className="order-result-item-price">
-                        LKR {(item.price * item.quantity).toLocaleString()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <p className="order-result-note">
-                  💡 No payment has been charged. Payment details will be shared if the order is accepted.
-                </p>
-
-                <div className="order-result-actions">
-                  <Link to="/" className="order-result-btn-primary">
-                    Back to Home <ArrowRight size={16} />
-                  </Link>
-                  <Link to="/items" className="order-result-btn-secondary">
-                    Continue Browsing
-                  </Link>
-                </div>
-              </div>
-            )}
-
             {/* Normal paid order */}
-            {!isSpecial && order.paymentStatus === 'paid' && (
+            {order.paymentStatus === 'paid' && (
               <div className="order-result-card order-result-success">
                 <CheckCircle2 size={64} className="order-result-icon order-result-icon-success" />
                 <h1 className="order-result-title">Order Confirmed!</h1>
@@ -198,7 +131,7 @@ export default function OrderSuccess() {
               </div>
             )}
 
-            {!isSpecial && order.paymentStatus === 'pending' && (
+            {order.paymentStatus === 'pending' && (
               <div className="order-result-card order-result-pending-final">
                 <Clock size={60} className="order-result-icon order-result-icon-pending" />
                 <h1 className="order-result-title">Payment Pending</h1>
@@ -212,7 +145,7 @@ export default function OrderSuccess() {
               </div>
             )}
 
-            {!isSpecial && (order.paymentStatus === 'failed' ||
+            {(order.paymentStatus === 'failed' ||
               order.paymentStatus === 'cancelled' ||
               order.paymentStatus === 'chargedback') && (
               <div className="order-result-card order-result-failed">

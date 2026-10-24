@@ -128,7 +128,7 @@ export const getMenuItems = (params = {}) => {
 
 /**
  * Create a menu item. `formData` is a FormData instance so it can carry
- * an image file (name, description, price, category, maxPerOrder, isActive, image).
+ * an image file (name, description, price, category, isActive, image).
  */
 export const createMenuItem = (formData) => {
   return apiFormCall('/menu', 'POST', formData);
@@ -149,7 +149,7 @@ export const deleteMenuItem = (id) => {
 };
 
 /**
- * Create a new order & obtain PayHere params (or special order confirmation)
+ * Create a new order & obtain PayHere params
  */
 export const createOrder = (orderData) => {
   return apiCall('/orders', 'POST', orderData);
@@ -172,10 +172,9 @@ export const getMyOrders = () => {
 /**
  * Get all orders for admin with optional filters & pagination
  */
-export const getAdminOrders = ({ status = '', type = '', search = '', page = 1, limit = 10 } = {}) => {
+export const getAdminOrders = ({ status = '', search = '', page = 1, limit = 10 } = {}) => {
   const params = new URLSearchParams();
   if (status && status !== 'all') params.append('status', status);
-  if (type) params.append('type', type);
   if (search && search.trim()) params.append('search', search.trim());
   if (page) params.append('page', page);
   if (limit) params.append('limit', limit);
@@ -195,13 +194,6 @@ export const getAdminOrderSummary = () => {
  */
 export const updateOrderStatus = (orderId, status) => {
   return apiCall(`/orders/${orderId}/status`, 'PATCH', { status });
-};
-
-/**
- * Accept or decline a special order
- */
-export const decideSpecialOrder = (orderId, decision) => {
-  return apiCall(`/orders/${orderId}/decision`, 'PATCH', { decision });
 };
 
 /**
