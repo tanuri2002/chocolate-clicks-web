@@ -63,6 +63,11 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: #e5e7eb;
+  border-left: 4px solid #ea580c;
+  padding-left: 0.75rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 /* KPI Cards Grid */

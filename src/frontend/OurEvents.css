@@ -9,6 +9,44 @@
   padding-bottom: 90px;
 }
 
+.events-hero {
+  padding: 8rem 1.5rem 3rem;
+  text-align: center;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.events-hero-accent {
+  display: block;
+  font-family: 'Beau Rivage', cursive;
+  color: #c98b3b;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.events-hero h1 {
+  font-family: 'Kalnia', serif;
+  color: #ffffff;
+  font-size: 2.75rem;
+  margin: 0 0 1rem;
+}
+
+.events-hero p {
+  color: #ababab;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .events-hero {
+    padding: 5rem 1.25rem 2rem;
+  }
+
+  .events-hero h1 {
+    font-size: 2.1rem;
+  }
+}
+
 .events-container {
   max-width: 1140px;
   margin: 0 auto;
@@ -75,80 +113,33 @@
   line-height: 1.3;
 }
 
-/* ── Experience Cards Single-Row Auto Carousel ── */
-:root {
-  --event-card-width: 320px;
-  --event-card-gap: 28px;
-}
-
-@media (max-width: 768px) {
-  :root {
-    --event-card-width: 280px;
-    --event-card-gap: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  :root {
-    --event-card-width: 250px;
-    --event-card-gap: 14px;
-  }
-}
-
+/* ── Two Experience Cards – Static Grid ── */
 .experiences-section {
-  padding: 24px 0 35px;
+  padding: 40px 0 45px;
   width: 100%;
-  overflow: hidden;
-  position: relative;
   background-color: #000000;
 }
 
-.experiences-carousel-wrapper {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  padding: 50px 0 35px;
-  background-color: #000000;
+.experiences-static-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
 }
 
-/* Side Edge Fade Masks for Smooth Emerge/Disappear into Pure Black */
-.carousel-fade-mask {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: clamp(50px, 12vw, 180px);
-  pointer-events: none;
-  z-index: 12;
+@media (max-width: 640px) {
+  .experiences-static-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    gap: 20px;
+  }
 }
 
-.carousel-fade-left {
-  left: 0;
-  background: linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
-}
-
-.carousel-fade-right {
-  right: 0;
-  background: linear-gradient(270deg, #000000 0%, rgba(0, 0, 0, 0) 100%);
-}
-
-/* Single-Row Continuous Track */
-.carousel-track {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: var(--event-card-gap);
-  width: max-content;
-  will-change: transform;
-}
-
-/* Card Base */
-.experience-app-card {
-  width: var(--event-card-width);
-  min-width: var(--event-card-width);
-  max-width: var(--event-card-width);
-  flex-shrink: 0;
-  background-color: #241912;
+/* Static Experience Card */
+.experience-static-card {
+  background-color: #1a1310;
   border-radius: 20px;
   overflow: hidden;
   display: flex;
@@ -156,71 +147,39 @@
   cursor: pointer;
   outline: none;
   user-select: none;
-  border: 1px solid rgba(201, 139, 59, 0.18);
-  transition: transform 1.0s cubic-bezier(0.25, 1, 0.4, 1),
-              filter 1.0s ease,
-              opacity 1.0s ease,
-              border-color 1.0s ease,
-              box-shadow 1.0s ease;
-  will-change: transform, filter, opacity;
+  border: 1px solid rgba(201, 139, 59, 0.2);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.4, 1),
+    border-color 0.35s ease,
+    box-shadow 0.4s ease;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Center Card - Prominently Large, Highlighted Border, Full Brightness */
-.experience-app-card.is-central-card {
-  transform: scale(1.22) !important;
-  filter: brightness(1.15) !important;
-  opacity: 1 !important;
-  border: 2.5px solid #d49a45 !important;
-  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.95), 0 0 35px rgba(212, 154, 69, 0.6) !important;
-  z-index: 15 !important;
+.experience-static-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: #d49a45;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 154, 69, 0.25);
 }
 
-/* Touched / Hovered Card - Stops loop, expands even more, highlighted gold glow */
-.experience-app-card.is-touched-card {
-  transform: scale(1.26) !important;
-  filter: brightness(1.2) !important;
-  opacity: 1 !important;
-  border: 2.5px solid #f1b76e !important;
-  box-shadow: 0 28px 75px rgba(0, 0, 0, 0.95), 0 0 45px rgba(241, 183, 110, 0.75) !important;
-  z-index: 30 !important;
-}
-
-/* Dimmed / Side Cards - Noticeably smaller, reduced brightness */
-.experience-app-card.is-dimmed-card {
-  transform: scale(0.82) !important;
-  filter: brightness(0.45) !important;
-  opacity: 0.55 !important;
-  border: 1px solid rgba(201, 139, 59, 0.12) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
-  z-index: 2 !important;
-}
-
-@media (max-width: 768px) {
-  .experience-app-card.is-central-card {
-    transform: scale(1.1) !important;
-  }
-  .experience-app-card.is-touched-card {
-    transform: scale(1.14) !important;
-  }
-  .experience-app-card.is-dimmed-card {
-    transform: scale(0.85) !important;
-  }
-}
-
-.experience-app-card:focus-visible {
+.experience-static-card:focus-visible {
   outline: 2px solid #c98b3b;
   outline-offset: 4px;
 }
 
-.experience-app-media {
+.experience-static-media {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 260px;
   overflow: hidden;
   background-color: #17100b;
 }
 
-.experience-app-media img {
+@media (max-width: 640px) {
+  .experience-static-media {
+    height: 220px;
+  }
+}
+
+.experience-static-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -228,9 +187,8 @@
   transition: transform 0.6s ease;
 }
 
-.experience-app-card.is-central-card .experience-app-media img,
-.experience-app-card.is-touched-card .experience-app-media img {
-  transform: scale(1.05);
+.experience-static-card:hover .experience-static-media img {
+  transform: scale(1.06);
 }
 
 .experience-price-pill {
@@ -249,23 +207,34 @@
   backdrop-filter: blur(6px);
 }
 
-.experience-app-body {
-  padding: 1.25rem 1.4rem 1.2rem;
+.experience-static-body {
+  padding: 1.35rem 1.5rem 1.3rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-.experience-app-title {
+.experience-tagline {
+  display: block;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c98b3b;
+  margin-bottom: 6px;
+}
+
+.experience-static-title {
   font-family: 'Kalnia', serif;
-  font-size: 1.45rem;
+  font-size: 1.55rem;
   font-weight: 500;
   color: #fff6ee;
   margin: 0 0 1rem 0;
   line-height: 1.25;
 }
 
-.experience-app-footer {
+.experience-static-footer {
   margin-top: auto;
   padding-top: 0.75rem;
 }
@@ -285,94 +254,12 @@
   transition: transform 0.25s ease;
 }
 
-.experience-app-card:hover .experience-view-link,
-.experience-app-card.is-central-card .experience-view-link,
-.experience-app-card.is-touched-card .experience-view-link {
+.experience-static-card:hover .experience-view-link {
   color: #f1b76e;
 }
 
-.experience-app-card:hover .experience-arrow-icon,
-.experience-app-card.is-central-card .experience-arrow-icon,
-.experience-app-card.is-touched-card .experience-arrow-icon {
+.experience-static-card:hover .experience-arrow-icon {
   transform: translateX(5px);
-}
-
-/* Nav Arrows */
-.carousel-nav-btn {
-  position: absolute;
-  top: calc(50% - 15px);
-  transform: translateY(-50%);
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: rgba(22, 16, 11, 0.88);
-  border: 1px solid rgba(201, 139, 59, 0.45);
-  color: #eeddcc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 20;
-  backdrop-filter: blur(8px);
-  transition: all 0.25s ease;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
-}
-
-.carousel-nav-btn:hover {
-  background: #c98b3b;
-  color: #120c08;
-  border-color: #c98b3b;
-  transform: translateY(-50%) scale(1.08);
-  box-shadow: 0 8px 25px rgba(201, 139, 59, 0.45);
-}
-
-.carousel-nav-btn.prev {
-  left: 20px;
-}
-
-.carousel-nav-btn.next {
-  right: 20px;
-}
-
-@media (max-width: 640px) {
-  .carousel-nav-btn {
-    width: 38px;
-    height: 38px;
-  }
-  .carousel-nav-btn.prev {
-    left: 8px;
-  }
-  .carousel-nav-btn.next {
-    right: 8px;
-  }
-}
-
-/* Indicator Dots */
-.carousel-dots-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.carousel-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: rgba(201, 139, 59, 0.25);
-  border: 1px solid rgba(201, 139, 59, 0.4);
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.3s ease;
-}
-
-.carousel-dot.active {
-  width: 26px;
-  border-radius: 999px;
-  background: #c98b3b;
-  border-color: #c98b3b;
-  box-shadow: 0 0 12px rgba(201, 139, 59, 0.5);
 }
 
 /* ── Scheduled Events Section ── */
@@ -506,7 +393,7 @@
 
 .scheduled-card-meta {
   display: flex;
-  align-items: center;
+  align-items: left;
   gap: 16px;
   flex-wrap: wrap;
   color: #c98b3b;
@@ -517,7 +404,7 @@
 
 .scheduled-card-meta span {
   display: inline-flex;
-  align-items: center;
+  align-items: left;
   gap: 5px;
 }
 
@@ -651,7 +538,9 @@
 }
 
 @keyframes events-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .events-error-banner {

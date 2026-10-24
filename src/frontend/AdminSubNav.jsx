@@ -16,9 +16,9 @@ export default function AdminSubNav() {
   const navItems = [
     { label: 'Overview', path: '/dashboard', icon: LayoutDashboard, end: true },
     { label: 'Orders', path: '/dashboard/orders', icon: ShoppingBag, end: false },
-    { label: 'Events', path: '/dashboard/events', icon: CalendarDays, end: false },
     { label: 'Customers', path: '/dashboard/customers', icon: Users, end: false },
     { label: 'Menu', path: '/dashboard/menu', icon: UtensilsCrossed, end: false },
+    { label: 'Events', path: '/dashboard/events', icon: CalendarDays, end: false },
   ];
 
   return (

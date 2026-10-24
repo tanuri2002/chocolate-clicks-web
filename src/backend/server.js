@@ -21,7 +21,9 @@ app.use("/api/menu", require("./routes/menu"));
 app.use("/api/orders", require("./routes/orders"));
 app.use("/api/payhere", require("./routes/payhere"));
 app.use("/api/workshops", require("./routes/workshops"));
+app.use("/api/events", require("./routes/workshops"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/analytics", require("./routes/analytics"));
 
 // Health check route
 app.get("/", (req, res) => {

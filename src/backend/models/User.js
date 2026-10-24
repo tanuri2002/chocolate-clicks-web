@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    isSeeded: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   { timestamps: true }
 );

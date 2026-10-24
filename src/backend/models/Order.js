@@ -124,8 +124,17 @@ const orderSchema = new mongoose.Schema(
       method: { type: String, default: "" },
       statusMessage: { type: String, default: "" },
     },
+    isSeeded: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   { timestamps: true }
 );
+
+// Compound indexes to optimize analytics queries (filtering by status and date ranges)
+orderSchema.index({ createdAt: -1, status: 1 });
+orderSchema.index({ status: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Order", orderSchema);

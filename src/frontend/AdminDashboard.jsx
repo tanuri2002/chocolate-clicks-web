@@ -36,7 +36,6 @@ const emptyForm = {
 
 const emptyCategoryForm = {
   name: '',
-  priceInfo: '',
   description: '',
 };
 
@@ -280,14 +279,6 @@ export default function AdminDashboard() {
                   onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
                 />
               </label>
-              <label>
-                Price Info (optional)
-                <input
-                  placeholder="e.g. LKR 4,000/- PER PERSON"
-                  value={newCategory.priceInfo}
-                  onChange={(e) => setNewCategory({ ...newCategory, priceInfo: e.target.value })}
-                />
-              </label>
               <label className="admin-cat-desc-label">
                 Description (optional)
                 <input
@@ -309,7 +300,7 @@ export default function AdminDashboard() {
               <div className="admin-cat-chip" key={cat._id || cat.name}>
                 <div className="admin-cat-chip-info">
                   <span className="admin-cat-chip-name">{cat.name}</span>
-                  {cat.priceInfo && <span className="admin-cat-chip-price">{cat.priceInfo}</span>}
+                  {cat.description && <span className="admin-cat-chip-desc">{cat.description}</span>}
                 </div>
                 {/* Allow deleting custom category */}
                 {cat._id && (
@@ -348,7 +339,7 @@ export default function AdminDashboard() {
               >
                 {categories.map((cat) => (
                   <option key={cat._id || cat.name} value={cat.name}>
-                    {cat.name} {cat.priceInfo ? `· (${cat.priceInfo})` : ''}
+                    {cat.name}
                   </option>
                 ))}
               </select>

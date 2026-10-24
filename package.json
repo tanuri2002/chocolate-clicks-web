@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "seed:menu": "node src/backend/scripts/seedMenu.js"
+    "seed:menu": "node src/backend/scripts/seedMenu.js",
+    "seed:analytics": "node scripts/seedAnalytics.js --seed",
+    "clean:analytics": "node scripts/seedAnalytics.js --clean"
   },
   "dependencies": {
     "lucide-react": "^0.562.0",

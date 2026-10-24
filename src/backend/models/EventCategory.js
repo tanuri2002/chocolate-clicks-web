@@ -9,17 +9,7 @@ const eventCategorySchema = new mongoose.Schema(
       trim: true,
       maxlength: 100,
     },
-    slug: {
-      type: String,
-      trim: true,
-      lowercase: true,
-    },
     description: {
-      type: String,
-      trim: true,
-      default: "",
-    },
-    priceInfo: {
       type: String,
       trim: true,
       default: "",

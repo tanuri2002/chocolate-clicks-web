@@ -19,6 +19,7 @@ import DashboardOverview from './frontend/DashboardOverview';
 import OrdersPage from './frontend/OrdersPage';
 import CustomersPlaceholder from './frontend/CustomersPlaceholder';
 import MenuManagement from './frontend/MenuManagement';
+import EventsManagement from './frontend/EventsManagement';
 import FoodItems from "./frontend/FoodItems";
 import MaskWorkshop from "./frontend/MaskWorkshop";
 import About from './frontend/About';
@@ -145,9 +146,9 @@ function App() {
           >
             <Route index element={<DashboardOverview />} />
             <Route path="orders" element={<OrdersPage />} />
-            <Route path="events" element={<AdminDashboard />} />
             <Route path="customers" element={<CustomersPlaceholder />} />
             <Route path="menu" element={<MenuManagement />} />
+            <Route path="events" element={<EventsManagement />} />
           </Route>
           <Route path="/events" element={<OurEvents />} />
           <Route path="/bake-it-happen" element={<BakeItHappen />} />

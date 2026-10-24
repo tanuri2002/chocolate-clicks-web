@@ -115,6 +115,17 @@ export const getEventCategories = () => apiCall('/workshops/categories', 'GET');
 export const createEventCategory = (categoryData) => apiCall('/workshops/categories', 'POST', categoryData);
 export const deleteEventCategory = (id) => apiCall(`/workshops/categories/${id}`, 'DELETE');
 
+// ── Events API ─────────────────────────────────────────────────────────────
+export const getEvents = (type = 'all', category = '') => {
+  const params = new URLSearchParams({ type });
+  if (category) params.append('category', category);
+  return apiCall(`/events?${params.toString()}`, 'GET');
+};
+export const createEvent = (formData) => apiFormCall('/events', 'POST', formData);
+export const updateEvent = (id, formData) => apiFormCall(`/events/${id}`, 'PUT', formData);
+export const updateEventSlots = (id, availableSlots) => apiCall(`/events/${id}/slots`, 'PATCH', { availableSlots });
+export const deleteEvent = (id) => apiCall(`/events/${id}`, 'DELETE');
+
 
 /**
  * Check if the logged in user is an admin
@@ -195,6 +206,44 @@ export const getAdminOrders = ({ status = '', search = '', page = 1, limit = 10 
  */
 export const getAdminOrderSummary = () => {
   return apiCall('/orders/summary', 'GET');
+};
+
+/**
+ * Get all registered customers (role !== 'admin')
+ */
+export const getAdminCustomers = () => {
+  return apiCall('/admin/customers', 'GET');
+};
+
+// ── Analytics API ────────────────────────────────────────────────────────────
+export const getAnalyticsSummary = (range = '30d') => {
+  return apiCall(`/analytics/summary?range=${encodeURIComponent(range)}`, 'GET');
+};
+
+export const getAnalyticsSalesTrend = (range = '30d', granularity = 'day') => {
+  return apiCall(
+    `/analytics/sales-trend?range=${encodeURIComponent(range)}&granularity=${encodeURIComponent(granularity)}`,
+    'GET'
+  );
+};
+
+export const getAnalyticsTopProducts = (range = '30d', limit = 5) => {
+  return apiCall(
+    `/analytics/top-products?range=${encodeURIComponent(range)}&limit=${encodeURIComponent(limit)}`,
+    'GET'
+  );
+};
+
+export const getAnalyticsDemandHeatmap = (range = '30d') => {
+  return apiCall(`/analytics/demand-heatmap?range=${encodeURIComponent(range)}`, 'GET');
+};
+
+export const getAnalyticsCustomers = (range = '30d') => {
+  return apiCall(`/analytics/customers?range=${encodeURIComponent(range)}`, 'GET');
+};
+
+export const getAnalyticsForecast = () => {
+  return apiCall('/analytics/forecast', 'GET');
 };
 
 /**

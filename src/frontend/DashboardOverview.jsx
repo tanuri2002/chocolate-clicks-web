@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Clock, CheckCircle, Users, XCircle, DollarSign, AlertCircle } from 'lucide-react';
 import { getAdminOrderSummary } from '../api';
+import AnalyticsSection from './analytics/AnalyticsSection';
 import './Dashboard.css';
 
 /**
@@ -238,6 +239,9 @@ export default function DashboardOverview() {
               </div>
             </div>
           </section>
+
+          {/* Analytics Section */}
+          <AnalyticsSection />
 
           {/* Recent Orders Card (Latest 5 orders) */}
           <section className="recent-orders-card" aria-labelledby="recent-orders-title">
