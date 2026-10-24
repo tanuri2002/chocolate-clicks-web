@@ -1,13 +1,14 @@
 // src/frontend/AdminSubNav.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, Users, UtensilsCrossed } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Users, UtensilsCrossed, CalendarDays } from 'lucide-react';
 import './Dashboard.css';
 
 /**
  * Admin navigation bar shown on all admin dashboard pages:
  * - Overview (/dashboard)
  * - Orders (/dashboard/orders)
+ * - Events (/dashboard/events)
  * - Customers (/dashboard/customers)
  * - Menu (/dashboard/menu)
  */
@@ -15,6 +16,7 @@ export default function AdminSubNav() {
   const navItems = [
     { label: 'Overview', path: '/dashboard', icon: LayoutDashboard, end: true },
     { label: 'Orders', path: '/dashboard/orders', icon: ShoppingBag, end: false },
+    { label: 'Events', path: '/dashboard/events', icon: CalendarDays, end: false },
     { label: 'Customers', path: '/dashboard/customers', icon: Users, end: false },
     { label: 'Menu', path: '/dashboard/menu', icon: UtensilsCrossed, end: false },
   ];

@@ -38,23 +38,35 @@ export default function WorkshopRegistration() {
   }
 
   if (loading) return <main className="workshop-registration-page"><p>Loading workshop...</p></main>;
-  if (!workshop) return <main className="workshop-registration-page"><p role="alert">{error || 'Workshop not found.'}</p><Link to="/mask-workshop">Back to workshops</Link></main>;
+  if (!workshop) return <main className="workshop-registration-page"><p role="alert">{error || 'Workshop not found.'}</p><Link to="/events">Back to events</Link></main>;
+
+  const categoryName = workshop.category || '';
+  const backRoute = categoryName.toLowerCase().includes('bake')
+    ? '/bake-it-happen'
+    : categoryName.toLowerCase().includes('mask')
+    ? '/mask-workshop'
+    : '/events';
+  const backLabel = categoryName.toLowerCase().includes('bake')
+    ? 'Back to Bake It Happen'
+    : categoryName.toLowerCase().includes('mask')
+    ? 'Back to Mask Workshop'
+    : 'Back to Events';
 
   return (
     <main className="workshop-registration-page">
-      <Link className="workshop-registration-back" to="/mask-workshop">Back to workshops</Link>
+      <Link className="workshop-registration-back" to={backRoute}>← {backLabel}</Link>
       <section className="workshop-registration-layout">
         <img className="workshop-registration-banner" src={workshop.bannerUrl} alt={`${workshop.title} banner`} />
         <div className="workshop-registration-content">
-          <p className="workshop-public-kicker">Workshop registration</p>
+          <p className="workshop-public-kicker">{workshop.category || 'Workshop registration'}</p>
           <h1>{workshop.title}</h1>
           <p>{workshop.description}</p>
           <p className="workshop-registration-meta">{new Intl.DateTimeFormat(undefined, { dateStyle: 'long', timeStyle: 'short' }).format(new Date(workshop.date))}<br />{workshop.location}</p>
           {complete ? (
             <div className="workshop-registration-success" role="status">
-              <h2>You’re registered</h2>
+              <h2>You’re registered!</h2>
               <p>Your details have been saved for this workshop.</p>
-              <Link to="/mask-workshop">Return to workshops</Link>
+              <Link to={backRoute}>{backLabel}</Link>
             </div>
           ) : (
             <form className="workshop-registration-form" onSubmit={handleSubmit}>

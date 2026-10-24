@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getWorkshops } from "../api";
 import "./MaskWorkshop.css";
@@ -8,10 +8,27 @@ export default function MaskWorkshop() {
   const [upcoming, setUpcoming] = useState([]);
   const [past, setPast] = useState([]);
   const [workshopError, setWorkshopError] = useState("");
+  const [layeredVisible, setLayeredVisible] = useState(false);
+  const layeredRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLayeredVisible(true);
+        }
+      },
+      { threshold: 0.15 }
+    );
+    if (layeredRef.current) {
+      observer.observe(layeredRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getWorkshops("upcoming"), getWorkshops("past")])
+    Promise.all([getWorkshops("upcoming", "mask"), getWorkshops("past", "mask")])
       .then(([upcomingData, pastData]) => {
         if (cancelled) return;
         setUpcoming(upcomingData.workshops || []);
@@ -117,7 +134,7 @@ export default function MaskWorkshop() {
           </div>
         )}
         
-        <div className="layered-images-container">
+        <div ref={layeredRef} className={`layered-images-container ${layeredVisible ? 'animate-in' : ''}`}>
           {/* Bottom layer - 2 images */}
           <div className="layer-bottom">
             <img src="/front_img/WhatsApp Image 2026-01-20 at 22.31.52.jpeg" alt="Edition poster 1" className="bottom-left" />

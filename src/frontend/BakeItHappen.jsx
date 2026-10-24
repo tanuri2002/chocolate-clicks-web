@@ -1,132 +1,179 @@
-// src/frontend/BakeItHappen.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './BakeItHappen.css';
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { getWorkshops } from "../api";
+import "./MaskWorkshop.css";
+import "./BakeItHappen.css";
 
 export default function BakeItHappen() {
   const navigate = useNavigate();
-  const [subscribed, setSubscribed] = useState(false);
-  const [email, setEmail] = useState('');
+  const [upcoming, setUpcoming] = useState([]);
+  const [past, setPast] = useState([]);
+  const [workshopError, setWorkshopError] = useState("");
+  const [layeredVisible, setLayeredVisible] = useState(false);
+  const layeredRef = useRef(null);
 
-  const handleNotify = (e) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail('');
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLayeredVisible(true);
+        }
+      },
+      { threshold: 0.15 }
+    );
+    if (layeredRef.current) {
+      observer.observe(layeredRef.current);
     }
-  };
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([getWorkshops("upcoming", "bake"), getWorkshops("past", "bake")])
+      .then(([upcomingData, pastData]) => {
+        if (cancelled) return;
+        setUpcoming(upcomingData.workshops || []);
+        setPast(pastData.workshops || []);
+      })
+      .catch((error) => {
+        if (!cancelled) setWorkshopError(error.message || "Workshop information is unavailable.");
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const formatDate = (date) => new Intl.DateTimeFormat(undefined, {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(new Date(date));
 
   return (
-    <div className="bake-page">
-      <div className="bake-container">
-        <button 
-          type="button" 
-          className="bake-back-btn" 
-          onClick={() => navigate('/events')}
+    <section className="mask-workshop-page bake-workshop-page">
+      <div className="bake-top-bar">
+        <button
+          type="button"
+          className="bake-back-nav-btn"
+          onClick={() => navigate("/events")}
         >
           ← Back to Events
         </button>
+      </div>
 
-        <section className="bake-hero">
-          <div className="bake-hero-text">
-            <span className="bake-hero-accent">Culinary Masterclass</span>
-            <h1>Bake It Happen</h1>
-            <p className="bake-lead">
-              A hands-on baking and decorating workshop designed for dessert lovers, budding bakers, and anyone passionate about artisanal sweet treats.
-            </p>
-            <p style={{ color: '#888', fontSize: '0.95rem', lineHeight: '1.6', fontFamily: 'system-ui, sans-serif' }}>
-              From whipping delicate buttercream rosettes to chocolate tempering and layered sponge perfection, join our master bakers right here at Chocolate Clicks for an unforgettable culinary experience.
-            </p>
-          </div>
-
-          <div className="bake-hero-media">
-            <img 
-              src="/front_img/cake1.jpeg" 
-              alt="Bake It Happen cake crafting" 
-            />
-          </div>
-        </section>
-
-        <div className="bake-pill-banner">
-          <div>
-            <p><strong>Status:</strong> Registration dates and workshop schedules are currently being finalized.</p>
-            <p style={{ fontSize: '0.9rem', color: '#888', marginTop: '0.35rem' }}>
-              Want to join our live creative sessions right now? Check out our <strong>Mask Painting Workshop</strong>.
-            </p>
-          </div>
-          <button 
-            type="button" 
-            className="bake-cta-btn" 
-            onClick={() => navigate('/mask-workshop')}
-          >
-            Explore Mask Workshop →
-          </button>
+      <div className="mask-workshop-top">
+        <div className="mask-workshop-text">
+          <h1>Bake It Happen</h1>
+          <h3>Join us for a Hands-on Baking &amp; Cake Art Masterclass</h3>
+          <p>
+            Bake, assemble, and decorate your own cake with step by step guidance
+            <br />
+            Sip on your favorite drink &amp; enjoy yummy snacks from Chocolate Clicks
+          </p>
         </div>
 
-        <section className="bake-highlights">
-          <h2>What You'll Experience</h2>
-          <div className="bake-cards">
-            <div className="bake-highlight-card">
-              <div className="bake-card-icon">🎂</div>
-              <h3>Artisan Cake Decorating</h3>
-              <p>Master piping bag techniques, textured finishes, and elegant edible garnishes.</p>
-            </div>
-
-            <div className="bake-highlight-card">
-              <div className="bake-card-icon">🍫</div>
-              <h3>Chocolate Alchemy</h3>
-              <p>Learn the secrets of rich ganache infusions, glossy glazes, and premium chocolate pairings.</p>
-            </div>
-
-            <div className="bake-highlight-card">
-              <div className="bake-card-icon">☕</div>
-              <h3>Sip &amp; Savor</h3>
-              <p>Enjoy handcrafted café drinks and snack platters while you bake and take your creations home.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Notify Form */}
-        <section className="bake-notify-box">
-          <h3>Get Notified First</h3>
-          <p>
-            Be the first to know when registrations and early-bird seats open for Bake It Happen.
-          </p>
-
-          {subscribed ? (
-            <p style={{ color: '#4ade80', fontWeight: '500', fontFamily: 'system-ui, sans-serif' }}>
-              ✓ Thank you! We'll notify you as soon as seats become available.
-            </p>
-          ) : (
-            <form onSubmit={handleNotify} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <input 
-                type="email" 
-                required 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email" 
-                style={{
-                  flex: '1 1 240px',
-                  padding: '0.65rem 1.2rem',
-                  borderRadius: '999px',
-                  border: '1px solid rgba(201, 139, 59, 0.4)',
-                  backgroundColor: '#0f0f0f',
-                  color: '#ffffff',
-                  fontFamily: 'inherit',
-                  outline: 'none'
-                }}
-              />
-              <button 
-                type="submit" 
-                className="bake-cta-btn"
-                style={{ backgroundColor: '#c98b3b', color: '#0f0f0f' }}
-              >
-                Notify Me
-              </button>
-            </form>
-          )}
-        </section>
+        <div className="mask-triangle">
+          <img src="/front_img/solo-left.jpeg" alt="Baking cake top" className="mask-top" />
+          <img src="/front_img/big-left1.jpeg" alt="Baking studio left" className="mask-bottom-left" />
+          <img src="/front_img/Big-picR.jpeg" alt="Artisan dessert right" className="mask-bottom-right" />
+        </div>
       </div>
-    </div>
+
+      <div className="mask-gallery">
+        <div className="mask-gallery-card left-col">
+          <img src="/front_img/big-left1.jpeg" alt="Baking moment 1" />
+        </div>
+        <div className="mask-gallery-card right-col with-overlay">
+          <img src="/front_img/Big-picR.jpeg" alt="Baking moment 2" />
+          <div className="overlay-copy">
+            <p>Witness how passion and imagination come alive in every cake.</p>
+          </div>      
+        </div>
+
+        <div className="mask-gallery-card left-col">
+          <img src="/front_img/solo-left.jpeg" alt="Baking moment 3" />
+        </div>
+        <div className="mask-gallery-card right-col with-overlay">
+          <img src="/front_img/solo-right.jpeg" alt="Baking moment 4" />
+          <div className="overlay-copy">
+            <p>Learn the secrets of artisanal baking and cake decoration</p>
+          </div>
+        </div>
+
+        <div className="mask-gallery-card left-col">
+          <img src="/front_img/Big-picR.jpeg" alt="Baking moment 5" />
+        </div>
+        <div className="mask-gallery-card right-col with-overlay">
+          <img src="/front_img/solo-left.jpeg" alt="Baking moment 6" />
+          <div className="overlay-copy">
+            <p>Take home your delicious hand-decorated creation</p>
+          </div>
+        </div>
+      </div>
+
+      <section className="workshop-public-section" id="upcoming-workshops" aria-labelledby="upcoming-bake-heading">
+        <p className="workshop-public-kicker">Make something delicious with us</p>
+        <h2 id="upcoming-bake-heading">Upcoming workshops</h2>
+        {workshopError && <p className="workshop-public-message" role="status">{workshopError}</p>}
+        {!workshopError && upcoming.length === 0 && (
+          <p className="workshop-public-message">No upcoming Bake It Happen workshops are scheduled right now.</p>
+        )}
+        <div className="public-workshop-grid">
+          {upcoming.map((workshop) => (
+            <article className="public-workshop-card" key={workshop._id}>
+              <img src={workshop.bannerUrl} alt={`${workshop.title} banner`} />
+              <div className="public-workshop-card-content">
+                <span className="bake-card-category-tag">Bake It Happen</span>
+                <p className="public-workshop-date">{formatDate(workshop.date)}</p>
+                <h3>{workshop.title}</h3>
+                <p>{workshop.description}</p>
+                <p className="public-workshop-location">{workshop.location}</p>
+                <p className="public-workshop-count">{workshop.registrationCount || 0} registered</p>
+                <button type="button" onClick={() => navigate(`/workshop/${workshop._id}/register`)}>
+                  Register
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div className="layered-editions-section">
+        <h2 className="editions-heading">Past workshops</h2>
+        <p className="past-workshop-count">{past.length} previous workshop{past.length === 1 ? "" : "s"}</p>
+        {past.length > 0 && (
+          <div className="past-workshop-list">
+            {past.map((workshop) => (
+              <article className="past-workshop-item" key={workshop._id}>
+                <img src={workshop.bannerUrl} alt={`${workshop.title} banner`} />
+                <div>
+                  <h3>{workshop.title}</h3>
+                  <p>{formatDate(workshop.date)} · {workshop.location}</p>
+                  <p>{workshop.registrationCount || 0} registered</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+        
+        <div ref={layeredRef} className={`layered-images-container ${layeredVisible ? 'animate-in' : ''}`}>
+          {/* Bottom layer - 2 images */}
+          <div className="layer-bottom">
+            <img src="/front_img/solo-left.jpeg" alt="Bake edition 1" className="bottom-left" />
+            <img src="/front_img/solo-right.jpeg" alt="Bake edition 2" className="bottom-right" />
+          </div>
+
+          {/* Middle layer - 2 images */}
+          <div className="layer-middle">
+            <img src="/front_img/big-left1.jpeg" alt="Bake edition 3" className="middle-left" />
+            <img src="/front_img/Big-picR.jpeg" alt="Bake edition 4" className="middle-right" />
+          </div>
+
+          {/* Top layer - 1 image with shadow */}
+          <div className="layer-top">
+            <img src="/front_img/Big-picR.jpeg" alt="Bake edition 5" className="top-shadow" />
+          </div>
+        </div>
+
+        <h2 className="editions-closing">Stay tuned for more<br/>sweet moments<br/>ahead!</h2>
+      </div>
+    </section>
   );
 }

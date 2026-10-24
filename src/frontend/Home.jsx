@@ -1,8 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
 
 export default function Home() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -30px 0px",
+      }
+    );
+
+    const elements = document.querySelectorAll(".scroll-fade");
+    elements.forEach((el) => observer.observe(el));
+
+    // Handle elements already in viewport on load (e.g. hero)
+    const timeout = setTimeout(() => {
+      elements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add("is-visible");
+        }
+      });
+    }, 250);
+
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <>
       {/* Hero Section */}
@@ -14,7 +48,7 @@ export default function Home() {
         <div className="hero-overlay"></div>
 
         {/* Text Content */}
-        <div className="hero-text">
+        <div className="hero-text scroll-fade">
           <h1>Sweeten Your Day with Chocolate Clicks!</h1>
           <p>Where Every Slice Tells a Sweet Story</p>
         </div>
@@ -40,7 +74,7 @@ export default function Home() {
       {/* Section 1: Clashed Image with Text */}
       <section className="section-1">
         <div className="section-content">
-          <div className="text-block">
+          <div className="text-block scroll-fade">
             <h2>Our patisserie produces</h2>
             <p>Unique sweets for lovers of yummy</p>
           </div>
@@ -54,8 +88,10 @@ export default function Home() {
       <section className="section-2">
         <img src="/front_img/third.jpg" alt="Products" className="section-2-img" />
         <div className="section-2-overlay">
-          <h2>Made with love</h2>
-          <p>Unique sweet for gourmet</p>
+          <div className="section-2-content scroll-fade">
+            <h2>Made with love</h2>
+            <p>Unique sweet for gourmet</p>
+          </div>
         </div>
       </section>
 

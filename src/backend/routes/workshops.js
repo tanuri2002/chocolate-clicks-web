@@ -2,10 +2,12 @@ const express = require("express");
 const multer = require("multer");
 const Workshop = require("../models/Workshop");
 const WorkshopRegistration = require("../models/WorkshopRegistration");
+const EventCategory = require("../models/EventCategory");
 const cloudinary = require("../config/cloudinary");
 const { protect, authorize } = require("../middleware/auth");
 
 const router = express.Router();
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -30,17 +32,96 @@ function uploadBanner(buffer) {
   });
 }
 
+const DEFAULT_CATEGORIES = [
+  { name: "Sri Lankan Wes Mask Painting", priceInfo: "LKR 5,000/- PER PERSON", description: "Traditional Sri Lankan folklore mask painting experience" },
+  { name: "Bake It Happen", priceInfo: "LKR 13,000/- PER PERSON", description: "Bake your cake culinary masterclass" },
+  { name: "Tote Bag Painting", priceInfo: "LKR 4,000/- PER PERSON", description: "Design and paint custom fabric tote bags" },
+  { name: "Pot Painting", priceInfo: "LKR 3,500/- PER PERSON", description: "Artistic ceramic and clay pot painting" },
+  { name: "Trinket Painting", priceInfo: "LKR 4,000/- PER PERSON", description: "Delicate trinket box decoration" },
+  { name: "Canvas Painting", priceInfo: "LKR 4,000/- PER PERSON", description: "Square, round or cloth canvas acrylic painting" },
+  { name: "Number Canvas", priceInfo: "LKR 5,500/- PER PERSON", description: "Guided paint-by-numbers canvas art" },
+];
+
+router.get("/categories", async (req, res) => {
+  try {
+    let categories = await EventCategory.find().sort({ createdAt: 1 });
+    if (categories.length === 0) {
+      await EventCategory.insertMany(DEFAULT_CATEGORIES);
+      categories = await EventCategory.find().sort({ createdAt: 1 });
+    }
+    return res.json({ success: true, categories });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post("/categories", protect, authorize("admin"), async (req, res) => {
+  try {
+    const { name, priceInfo, description } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: "Category name is required" });
+    }
+    const trimmedName = name.trim();
+    const existing = await EventCategory.findOne({ name: { $regex: new RegExp(`^${trimmedName}$`, "i") } });
+    if (existing) {
+      return res.status(409).json({ success: false, message: "Category already exists" });
+    }
+
+    const category = await EventCategory.create({
+      name: trimmedName,
+      priceInfo: priceInfo?.trim() || "",
+      description: description?.trim() || "",
+    });
+    return res.status(201).json({ success: true, category });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.delete("/categories/:id", protect, authorize("admin"), async (req, res) => {
+  try {
+    const category = await EventCategory.findByIdAndDelete(req.params.id);
+    if (!category) {
+      return res.status(404).json({ success: false, message: "Category not found" });
+    }
+    return res.json({ success: true, message: "Category deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const period = req.query.period === "past" ? "past" : "upcoming";
     const operator = period === "past" ? "$lt" : "$gte";
-    const workshops = await Workshop.find({
+
+    const query = {
       isPublished: true,
       date: { [operator]: new Date() },
-    }).sort({ date: period === "past" ? -1 : 1 });
+    };
+
+    if (req.query.category) {
+      const cat = req.query.category.trim();
+      if (/mask/i.test(cat)) {
+        // Matches Sri Lankan Wes Mask Painting or legacy workshops without category
+        query.$or = [
+          { category: { $regex: /mask/i } },
+          { category: { $exists: false } },
+          { category: null },
+          { category: "" },
+        ];
+      } else if (/bake/i.test(cat)) {
+        query.category = { $regex: /bake/i };
+      } else {
+        query.category = { $regex: new RegExp(cat, "i") };
+      }
+    }
+
+    const workshops = await Workshop.find(query).sort({ date: period === "past" ? -1 : 1 });
 
     const withCounts = await Promise.all(workshops.map(async (workshop) => ({
       ...workshop.toObject(),
+      category: workshop.category || "Sri Lankan Wes Mask Painting",
       registrationCount: await WorkshopRegistration.countDocuments({ workshop: workshop._id }),
     })));
 
@@ -55,6 +136,7 @@ router.get("/admin", protect, authorize("admin"), async (req, res) => {
     const workshops = await Workshop.find().sort({ date: -1 });
     const withCounts = await Promise.all(workshops.map(async (workshop) => ({
       ...workshop.toObject(),
+      category: workshop.category || "Sri Lankan Wes Mask Painting",
       registrationCount: await WorkshopRegistration.countDocuments({ workshop: workshop._id }),
     })));
     return res.json({ success: true, workshops: withCounts });
@@ -65,7 +147,7 @@ router.get("/admin", protect, authorize("admin"), async (req, res) => {
 
 router.post("/", protect, authorize("admin"), upload.single("banner"), async (req, res) => {
   try {
-    const { title, description, date, location, capacity } = req.body;
+    const { title, description, date, location, capacity, category } = req.body;
     if (!title || !description || !date || !location || !req.file) {
       return res.status(400).json({ success: false, message: "Title, description, date, location, and banner are required" });
     }
@@ -86,6 +168,7 @@ router.post("/", protect, authorize("admin"), upload.single("banner"), async (re
       location,
       bannerUrl,
       capacity: capacity ? Number(capacity) : null,
+      category: category?.trim() || "Sri Lankan Wes Mask Painting",
     });
     return res.status(201).json({ success: true, workshop: { ...workshop.toObject(), registrationCount: 0 } });
   } catch (error) {
@@ -171,7 +254,7 @@ router.get("/:id", async (req, res) => {
     const workshop = await Workshop.findOne({ _id: req.params.id, isPublished: true });
     if (!workshop) return res.status(404).json({ success: false, message: "Workshop not found" });
     const registrationCount = await WorkshopRegistration.countDocuments({ workshop: workshop._id });
-    return res.json({ success: true, workshop: { ...workshop.toObject(), registrationCount } });
+    return res.json({ success: true, workshop: { ...workshop.toObject(), category: workshop.category || "Sri Lankan Wes Mask Painting", registrationCount } });
   } catch (error) {
     const status = error.name === "CastError" ? 404 : 500;
     return res.status(status).json({ success: false, message: status === 404 ? "Workshop not found" : error.message });
