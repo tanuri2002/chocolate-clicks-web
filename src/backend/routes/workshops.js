@@ -542,6 +542,19 @@ router.get("/:id/registrations", protect, authorize("admin"), async (req, res) =
   }
 });
 
+router.delete("/registrations/:regId", protect, authorize("admin"), async (req, res) => {
+  try {
+    const registration = await WorkshopRegistration.findByIdAndDelete(req.params.regId);
+    if (!registration) {
+      return res.status(404).json({ success: false, message: "Registration not found" });
+    }
+    return res.json({ success: true, message: "Registration cancelled successfully" });
+  } catch (error) {
+    const status = error.name === "CastError" ? 404 : 500;
+    return res.status(status).json({ success: false, message: status === 404 ? "Registration not found" : error.message });
+  }
+});
+
 router.post("/:id/registrations", async (req, res) => {
   try {
     const workshop = await Workshop.findOne({ _id: req.params.id, isPublished: true });

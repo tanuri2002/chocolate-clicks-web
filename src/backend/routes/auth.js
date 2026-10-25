@@ -5,6 +5,10 @@ const crypto = require("crypto");
 const { protect } = require("../middleware/auth");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
+const { OAuth2Client } = require("google-auth-library");
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_WEB_CLIENT_ID);
+
 let rateLimit;
 try {
   rateLimit = require("express-rate-limit");
@@ -19,6 +23,14 @@ const passwordResetLimiter = rateLimit
       windowMs: 15 * 60 * 1000, // 15 minutes
       max: 5, // limit each IP to 5 requests per windowMs
       message: { success: false, message: "Too many requests from this IP, please try again after 15 minutes." }
+    })
+  : (req, res, next) => next();
+
+const authLimiter = rateLimit
+  ? rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 50, // limit to 50 attempts per 15 minutes
+      message: { success: false, message: "Too many authentication requests. Please try again later." }
     })
   : (req, res, next) => next();
 
@@ -41,7 +53,7 @@ const matchesSecret = (provided, expected) => {
 // @route   POST /api/auth/signup
 // @desc    Register user
 // @access  Public
-router.post("/signup", async (req, res) => {
+router.post("/signup", authLimiter, async (req, res) => {
   try {
     const { fullName, email, password, confirmPassword, phoneNo, address } = req.body;
 
@@ -103,7 +115,7 @@ router.post("/signup", async (req, res) => {
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -121,6 +133,13 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
+      });
+    }
+
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: "Your account has been deactivated. Please contact support.",
       });
     }
 
@@ -151,6 +170,133 @@ router.post("/login", async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+});
+
+// @route   POST /api/auth/google
+// @desc    Authenticate with Google OAuth ID token (Customer login/signup)
+// @access  Public
+router.post("/google", authLimiter, async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: "Google ID token credential is required",
+      });
+    }
+
+    const clientId = process.env.GOOGLE_WEB_CLIENT_ID;
+    if (!clientId) {
+      console.error("GOOGLE_WEB_CLIENT_ID is not configured in backend .env");
+      return res.status(500).json({
+        success: false,
+        message: "Google authentication is not properly configured on server",
+      });
+    }
+
+    // Verify Google ID token cryptographically
+    let ticket;
+    try {
+      ticket = await googleClient.verifyIdToken({
+        idToken: credential,
+        audience: clientId,
+      });
+    } catch (verifyError) {
+      console.error("Google token verification failed:", verifyError.message);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid or expired Google authentication token",
+      });
+    }
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to retrieve verified profile from Google",
+      });
+    }
+
+    // Ensure email is verified by Google
+    if (!payload.email_verified) {
+      return res.status(400).json({
+        success: false,
+        message: "Your Google email address is not verified by Google",
+      });
+    }
+
+    const normalizedEmail = payload.email.toLowerCase().trim();
+    let user = await User.findOne({ email: normalizedEmail });
+
+    if (user) {
+      if (user.isActive === false) {
+        return res.status(403).json({
+          success: false,
+          message: "Your account has been deactivated. Please contact support.",
+        });
+      }
+
+      // Security: Disallow admin elevation/hijacking via customer Google login
+      if (user.role === "admin") {
+        return res.status(403).json({
+          success: false,
+          message: "This email is registered to an Administrator. Please use administrator credentials to sign in.",
+        });
+      }
+
+      // Link googleId and avatar if not set
+      let needsSave = false;
+      if (!user.googleId) {
+        user.googleId = payload.sub;
+        needsSave = true;
+      }
+      if (payload.picture && (!user.avatar || user.avatar !== payload.picture)) {
+        user.avatar = payload.picture;
+        needsSave = true;
+      }
+      if (!user.isEmailVerified) {
+        user.isEmailVerified = true;
+        needsSave = true;
+      }
+      if (needsSave) {
+        await user.save({ validateBeforeSave: false });
+      }
+    } else {
+      // New user registering via Google: always created as customer
+      user = await User.create({
+        fullName: payload.name || normalizedEmail.split("@")[0],
+        email: normalizedEmail,
+        googleId: payload.sub,
+        authProvider: "google",
+        avatar: payload.picture || "",
+        isEmailVerified: true,
+        role: "customer",
+      });
+    }
+
+    // Issue JWT
+    const token = generateToken(user._id, user.role);
+
+    return res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar || "",
+      },
+      message: "Google authentication successful",
+    });
+  } catch (error) {
+    console.error("Google auth route error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error during Google authentication",
     });
   }
 });
@@ -212,79 +358,25 @@ router.post("/admin-signup", async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/admin-signup
-// @desc    Register an admin user (requires ADMIN_SIGNUP_SECRET)
-// @access  Public (secret-gated)
-router.post("/admin-signup", async (req, res) => {
-  try {
-    const { fullName, email, password, confirmPassword, adminSecret } = req.body;
-
-    if (!adminSecret || adminSecret !== process.env.ADMIN_SIGNUP_SECRET) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to create an admin account",
-      });
-    }
-
-    if (!fullName || !email || !password || !confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide all required fields",
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
-
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists with this email",
-      });
-    }
-
-    user = await User.create({
-      fullName,
-      email,
-      password,
-      role: "admin",
-    });
-
-    const token = generateToken(user._id, user.role);
-
-    res.status(201).json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-      },
-      message: "Admin registered successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-});
-
 // @route   GET /api/auth/me
 // @desc    Get current logged in user
 // @access  Private
 router.get("/me", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = req.user;
     res.status(200).json({
       success: true,
-      user,
+      user: {
+        id: user._id,
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar || "",
+        phoneNo: user.phoneNo,
+        address: user.address,
+        isActive: user.isActive,
+      },
     });
   } catch (error) {
     res.status(500).json({

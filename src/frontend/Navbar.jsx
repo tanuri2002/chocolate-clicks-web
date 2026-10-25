@@ -1,7 +1,6 @@
-// src/frontend/Navbar.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { isAuthenticated, isAdmin, logout } from '../api';
+import { useAuth } from './context/AuthContext';
 import { useCart } from './context/CartContext';
 import './Navbar.css';
 
@@ -11,12 +10,11 @@ export default function Navbar() {
   const [openPath, setOpenPath] = useState(null);
   const isOpen = openPath === pathname;
 
-  const loggedIn = isAuthenticated();
-  const admin = isAdmin();
+  const { isAuthenticated: loggedIn, isAdmin: admin, logoutUser } = useAuth();
   const { totalItems, openCart } = useCart();
 
   function handleLogout() {
-    logout();
+    logoutUser();
     navigate('/');
   }
 

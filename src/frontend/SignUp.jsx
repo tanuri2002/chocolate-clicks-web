@@ -3,12 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api';
 import signup from '../assets/signup.jpeg';
 import './SignUp.css';
+import GoogleAuthButton from './GoogleAuthButton';
+import { useAuth } from './context/AuthContext';
 
 export default function SignUp() {
   const [form, setForm] = useState({ fullName: '', email: '', phoneNo: '', address: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const { loginUser } = useAuth();
   const navigate = useNavigate();
 
   function handleChange(e) {
@@ -46,10 +49,9 @@ export default function SignUp() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Signup failed');
 
-      // Store JWT token and user info
+      // Store JWT token and update server-verified auth state
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        loginUser(data.token, data.user);
       }
 
       setSuccess('Signup successful! Redirecting...');
@@ -103,6 +105,16 @@ export default function SignUp() {
               </button>
             </form>
 
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+
+            <GoogleAuthButton
+              text="signup"
+              onError={(msg) => setError(msg)}
+              onSuccess={() => navigate('/')}
+            />
+
             {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
             {success && <p style={{ color: 'lightgreen', textAlign: 'center' }}>{success}</p>}
 
@@ -115,3 +127,4 @@ export default function SignUp() {
     </div>
   );
 }
+
