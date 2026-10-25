@@ -1,5 +1,19 @@
-.env
+# Dependencies
 node_modules/
+**/node_modules/
+
+# Production builds
 dist/
+**/dist/
+
+# Environment files
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Tooling and caches
 .vite/
 .vercel/
