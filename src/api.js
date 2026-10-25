@@ -1,5 +1,9 @@
-const rawApiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000').trim().replace(/\/+$/, '');
-export const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
+// Base API URL is loaded exclusively from environment variables (VITE_API_URL).
+// For local development, set VITE_API_URL=http://localhost:5000 in your local .env file.
+const rawApiUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+export const API_BASE_URL = rawApiUrl
+  ? (rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`)
+  : '/api';
 
 /**
  * Generic API request function with automatic token handling

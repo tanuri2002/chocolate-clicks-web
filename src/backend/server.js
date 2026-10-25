@@ -7,7 +7,12 @@ dotenv.config();
 
 const app = express();
 
-// CORS configuration reading CLIENT_URL (with localhost in non-production)
+// CORS configuration
+const defaultAllowedOrigins = [
+  "https://chocolate-clicks.me",
+  "https://www.chocolate-clicks.me",
+];
+
 const clientUrl = process.env.CLIENT_URL || process.env.FRONTEND_URL || "";
 const configuredOrigins = clientUrl
   .split(",")
@@ -15,9 +20,10 @@ const configuredOrigins = clientUrl
   .filter(Boolean);
 
 const allowedOrigins = [
+  ...defaultAllowedOrigins,
   ...configuredOrigins,
   ...(process.env.NODE_ENV !== "production"
-    ? ["http://localhost:5173", "http://127.0.0.1:5173"]
+    ? ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"]
     : []),
 ];
 
@@ -26,7 +32,10 @@ const corsOptions = {
     // Allow server-to-server or requests without origin (e.g. mobile apps, curl, PayHere IPN)
     if (!origin) return callback(null, true);
     const normalizedOrigin = origin.replace(/\/+$/, "");
-    if (allowedOrigins.includes(normalizedOrigin)) {
+    if (
+      allowedOrigins.includes(normalizedOrigin) ||
+      /^https:\/\/chocolate-clicks(-[a-z0-9-]+)?\.vercel\.app$/.test(normalizedOrigin)
+    ) {
       return callback(null, true);
     }
     // Allow all in development if no client URL is explicitly configured
