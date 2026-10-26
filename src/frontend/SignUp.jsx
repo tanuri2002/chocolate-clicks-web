@@ -68,7 +68,7 @@ export default function SignUp() {
     <div className="signup-page">
       <div className="signup-container">
         <div className="signup-image">
-          <img src={signup} alt="Tray of gooey S'mores brownies with toasted marshmallows" />
+          <img src={signup} alt="Delicious gourmet cupcakes" />
         </div>
 
         <div className="signup-form-container">

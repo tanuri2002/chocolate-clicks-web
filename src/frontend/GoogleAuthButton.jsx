@@ -70,6 +70,7 @@ export default function GoogleAuthButton({ text = 'signin', onError, onSuccess }
             text: text === 'signup' ? 'signup_with' : 'signin_with',
             logo_alignment: 'left',
             width: 320,
+            locale: 'en',
           });
 
           return true;

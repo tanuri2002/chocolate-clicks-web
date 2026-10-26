@@ -80,14 +80,16 @@ export default function Login() {
               onSuccess={() => navigate('/')}
             />
 
-            {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ color: 'crimson', textAlign: 'center', margin: '0.25rem 0', fontSize: '0.85rem' }}>{error}</p>}
 
-            <p className="login-footer" style={{ marginBottom: "-1rem" }}>
-              <Link to="/forgot-password">Forgot Password?</Link>
-            </p>
-            <p className="login-footer">
-              Don't have an account? <Link to="/signup">Sign Up</Link>
-            </p>
+            <div className="login-footer-group">
+              <p className="login-footer">
+                <Link to="/forgot-password">Forgot Password?</Link>
+              </p>
+              <p className="login-footer">
+                Don't have an account? <Link to="/signup">Sign Up</Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
