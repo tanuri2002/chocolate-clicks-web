@@ -58,7 +58,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check routes
 app.get("/api/health", (req, res) => {
-  res.json({ ok: true });
+  const mongoose = require("mongoose");
+  const states = ["disconnected", "connected", "connecting", "disconnecting"];
+  const dbState = states[mongoose.connection.readyState] || "unknown";
+  res.json({ ok: true, database: dbState });
 });
 
 app.get("/", (req, res) => {
@@ -89,8 +92,13 @@ app.use("/api/analytics", require("./routes/analytics"));
 // Run listen only when file is executed directly (local development)
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`Server running on port ${PORT}`);
+    try {
+      await connectDB();
+    } catch (error) {
+      console.error("MongoDB initial connection error:", error.message);
+    }
   });
 }
 
