@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getCurrentUser, logout } from '../api';
+import { getCurrentUser, getStoredUser, logout } from '../api';
 import './Profile.css';
 
 export default function Profile() {
@@ -13,13 +13,19 @@ export default function Profile() {
     async function fetchProfile() {
       try {
         const data = await getCurrentUser();
-        if (data.success && data.user) {
-          setUser(data.user);
+        const profileUser = data?.user || (data?.email || data?._id ? data : null) || getStoredUser();
+        if (profileUser) {
+          setUser(profileUser);
         } else {
           throw new Error('Failed to load profile');
         }
       } catch (err) {
-        setError(err.message || 'Error loading profile');
+        const fallback = getStoredUser();
+        if (fallback) {
+          setUser(fallback);
+        } else {
+          setError(err.message || 'Error loading profile');
+        }
       } finally {
         setLoading(false);
       }
