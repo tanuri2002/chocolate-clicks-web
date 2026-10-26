@@ -75,6 +75,13 @@ export const login = (email, password) => {
 };
 
 /**
+ * Login / Signup with Google credential token
+ */
+export const googleLogin = (credential) => {
+  return apiCall('/auth/google', 'POST', { credential });
+};
+
+/**
  * Get current logged in user
  */
 export const getCurrentUser = () => {
@@ -115,6 +122,7 @@ export const createWorkshop = (formData) => apiFormCall('/workshops', 'POST', fo
 export const updateWorkshopCapacity = (id, capacity) => apiCall(`/workshops/${id}/capacity`, 'PATCH', { capacity });
 export const registerForWorkshop = (id, registration) => apiCall(`/workshops/${id}/registrations`, 'POST', registration);
 export const getWorkshopRegistrations = (id) => apiCall(`/workshops/${id}/registrations`, 'GET');
+export const deleteWorkshopRegistration = (regId) => apiCall(`/workshops/registrations/${regId}`, 'DELETE');
 export const getAdminStats = () => apiCall('/admin/stats', 'GET');
 export const getEventCategories = () => apiCall('/workshops/categories', 'GET');
 export const createEventCategory = (categoryData) => apiCall('/workshops/categories', 'POST', categoryData);

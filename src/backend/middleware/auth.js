@@ -23,6 +23,13 @@ exports.protect = async (req, res, next) => {
         return res.status(401).json({ success: false, message: "The user belonging to this token does no longer exist" });
       }
 
+      if (user.isActive === false) {
+        return res.status(403).json({
+          success: false,
+          message: "Your account has been deactivated. Please contact support.",
+        });
+      }
+
       if (user.passwordChangedAt) {
         const changedTimestamp = parseInt(user.passwordChangedAt.getTime() / 1000, 10);
         if (decoded.iat < changedTimestamp) {
@@ -30,7 +37,8 @@ exports.protect = async (req, res, next) => {
         }
       }
 
-      req.user = decoded;
+      // Assign live database user so roles & permissions are always fresh
+      req.user = user;
       next();
     } catch (error) {
       return res.status(401).json({ success: false, message: "Token is not valid" });

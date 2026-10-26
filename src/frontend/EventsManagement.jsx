@@ -15,6 +15,12 @@ import {
   RefreshCw,
   History,
   CalendarCheck,
+  Search,
+  Download,
+  Phone,
+  Mail,
+  FileText,
+  UserCheck,
 } from 'lucide-react';
 import {
   getEvents,
@@ -23,6 +29,8 @@ import {
   updateEventSlots,
   deleteEvent,
   getEventCategories,
+  getWorkshopRegistrations,
+  deleteWorkshopRegistration,
 } from '../api';
 import './EventsManagement.css';
 import './Dashboard.css';
@@ -153,6 +161,14 @@ export default function EventsManagement() {
   const [slotSavingId, setSlotSavingId] = useState(null);
   const [slotSavedId, setSlotSavedId] = useState(null);
 
+  // Registered Attendees state
+  const [selectedWorkshopId, setSelectedWorkshopId] = useState('');
+  const [registrations, setRegistrations] = useState([]);
+  const [loadingRegistrations, setLoadingRegistrations] = useState(false);
+  const [regSearchTerm, setRegSearchTerm] = useState('');
+  const [deletingRegId, setDeletingRegId] = useState(null);
+  const [regError, setRegError] = useState('');
+
   // Load workshops and categories
   async function loadData() {
     setLoading(true);
@@ -203,6 +219,120 @@ export default function EventsManagement() {
       .filter((w) => new Date(w.date) < now)
       .sort((a, b) => new Date(b.date) - new Date(a.date)); // most recent first
   }, [workshops, now]);
+
+  // Total registrations across all workshops
+  const totalRegistrationsCount = useMemo(() => {
+    return workshops.reduce((sum, w) => sum + (w.registrationCount || 0), 0);
+  }, [workshops]);
+
+  // Selected workshop object for details card
+  const currentSelectedWorkshop = useMemo(() => {
+    return workshops.find((w) => w._id === selectedWorkshopId) || null;
+  }, [workshops, selectedWorkshopId]);
+
+  // Load registrations for selected workshop
+  async function loadRegistrations(workshopId) {
+    if (!workshopId) {
+      setRegistrations([]);
+      return;
+    }
+    setLoadingRegistrations(true);
+    setRegError('');
+    try {
+      const res = await getWorkshopRegistrations(workshopId);
+      setRegistrations(res.registrations || []);
+    } catch (err) {
+      console.error('Failed to load registrations:', err);
+      setRegError(err.message || 'Failed to load attendees.');
+    } finally {
+      setLoadingRegistrations(false);
+    }
+  }
+
+  // When switching to registrations tab or selecting a workshop from dropdown
+  useEffect(() => {
+    if (activeTab === 'registrations' && selectedWorkshopId) {
+      loadRegistrations(selectedWorkshopId);
+    }
+  }, [activeTab, selectedWorkshopId]);
+
+  // Auto-select first workshop if none selected yet
+  useEffect(() => {
+    if (activeTab === 'registrations' && !selectedWorkshopId && workshops.length > 0) {
+      setSelectedWorkshopId(workshops[0]._id);
+    }
+  }, [activeTab, selectedWorkshopId, workshops]);
+
+  // Direct click from any workshop card
+  function handleViewRegistrations(workshopId) {
+    setSelectedWorkshopId(workshopId);
+    setActiveTab('registrations');
+  }
+
+  // Delete / cancel an attendee registration
+  async function handleDeleteRegistration(reg) {
+    const confirmMsg = `Are you sure you want to cancel the registration for ${reg.fullName} (${reg.email})?`;
+    if (!window.confirm(confirmMsg)) return;
+
+    setDeletingRegId(reg._id);
+    try {
+      await deleteWorkshopRegistration(reg._id);
+      setRegistrations((prev) => prev.filter((r) => r._id !== reg._id));
+      setAlertSuccess(`Registration for ${reg.fullName} was cancelled.`);
+      setWorkshops((prev) =>
+        prev.map((w) =>
+          w._id === selectedWorkshopId
+            ? { ...w, registrationCount: Math.max(0, (w.registrationCount || 1) - 1) }
+            : w
+        )
+      );
+    } catch (err) {
+      console.error('Failed to delete registration:', err);
+      setAlertError(err.message || 'Failed to cancel registration.');
+    } finally {
+      setDeletingRegId(null);
+    }
+  }
+
+  // Export attendees to CSV
+  function exportAttendeesToCsv() {
+    if (!currentSelectedWorkshop || registrations.length === 0) return;
+    const headers = ['#', 'Full Name', 'Email', 'Phone', 'Registration Date', 'Notes'];
+    const rows = registrations.map((r, idx) => [
+      idx + 1,
+      `"${(r.fullName || '').replace(/"/g, '""')}"`,
+      `"${(r.email || '').replace(/"/g, '""')}"`,
+      `"${(r.phone || '').replace(/"/g, '""')}"`,
+      `"${new Date(r.createdAt).toLocaleString('en-US', { timeZone: 'Asia/Colombo' })}"`,
+      `"${(r.notes || '').replace(/"/g, '""')}"`,
+    ]);
+    const csvContent =
+      'data:text/csv;charset=utf-8,\uFEFF' +
+      [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute(
+      'download',
+      `attendees_${(currentSelectedWorkshop.title || 'workshop').replace(/[^a-zA-Z0-9]/g, '_')}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Filtered registrations by search query
+  const filteredRegistrations = useMemo(() => {
+    if (!regSearchTerm.trim()) return registrations;
+    const term = regSearchTerm.toLowerCase();
+    return registrations.filter(
+      (r) =>
+        (r.fullName && r.fullName.toLowerCase().includes(term)) ||
+        (r.email && r.email.toLowerCase().includes(term)) ||
+        (r.phone && r.phone.toLowerCase().includes(term)) ||
+        (r.notes && r.notes.toLowerCase().includes(term))
+    );
+  }, [registrations, regSearchTerm]);
 
   // Handle inline slots stepper change
   function handleSlotStep(id, delta) {
@@ -545,8 +675,18 @@ export default function EventsManagement() {
             </div>
           )}
 
-          {/* Action buttons: Edit & Delete */}
+          {/* Action buttons: Attendees, Edit & Delete */}
           <div className="event-row-btns">
+            <button
+              type="button"
+              className="event-btn-icon event-btn-icon-attendees"
+              onClick={() => handleViewRegistrations(workshop._id)}
+              title="View registered attendees for this workshop"
+            >
+              <Users size={14} />
+              <span>Attendees ({workshop.registrationCount || 0})</span>
+            </button>
+
             <button
               type="button"
               className="event-btn-icon"
@@ -647,6 +787,16 @@ export default function EventsManagement() {
 
         <button
           type="button"
+          className={`events-tab-btn ${activeTab === 'registrations' ? 'active' : ''}`}
+          onClick={() => setActiveTab('registrations')}
+        >
+          <Users size={16} />
+          <span>Registered Attendees</span>
+          <span className="events-tab-count">{totalRegistrationsCount}</span>
+        </button>
+
+        <button
+          type="button"
           className={`events-tab-btn ${activeTab === 'add' ? 'active' : ''}`}
           onClick={() => setActiveTab('add')}
         >
@@ -697,7 +847,7 @@ export default function EventsManagement() {
               {pastWorkshops.map((workshop) => renderWorkshopRow(workshop, true))}
             </div>
           )
-        ) : (
+        ) : activeTab === 'add' ? (
           /* SECTION C: ADD WORKSHOP FORM */
           <form className="event-form" onSubmit={handleAddSubmit}>
             {addError && (
@@ -885,6 +1035,283 @@ export default function EventsManagement() {
               </button>
             </div>
           </form>
+        ) : (
+          /* SECTION D: REGISTERED ATTENDEES */
+          <div className="event-reg-section">
+            {/* Toolbar: Workshop Selector Dropdown + Search + CSV Export */}
+            <div className="event-reg-toolbar">
+              <div className="event-reg-select-group">
+                <label htmlFor="event-workshop-dropdown" className="event-reg-select-label">
+                  Select Workshop Event:
+                </label>
+                <select
+                  id="event-workshop-dropdown"
+                  className="event-reg-select"
+                  value={selectedWorkshopId}
+                  onChange={(e) => setSelectedWorkshopId(e.target.value)}
+                >
+                  {workshops.length === 0 ? (
+                    <option value="">No workshops available</option>
+                  ) : (
+                    <>
+                      {upcomingWorkshops.length > 0 && (
+                        <optgroup label="Upcoming Workshops">
+                          {upcomingWorkshops.map((w) => (
+                            <option key={w._id} value={w._id}>
+                              {w.title} — {formatEventDate(w.date)} ({w.registrationCount || 0} registered)
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {pastWorkshops.length > 0 && (
+                        <optgroup label="Past Workshops">
+                          {pastWorkshops.map((w) => (
+                            <option key={w._id} value={w._id}>
+                              {w.title} — {formatEventDate(w.date)} ({w.registrationCount || 0} registered)
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                    </>
+                  )}
+                </select>
+              </div>
+
+              <div className="event-reg-controls">
+                <div className="event-reg-search-wrap">
+                  <Search size={15} className="event-reg-search-icon" />
+                  <input
+                    type="text"
+                    className="event-reg-search-input"
+                    placeholder="Search by name, email, phone..."
+                    value={regSearchTerm}
+                    onChange={(e) => setRegSearchTerm(e.target.value)}
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  className="admin-btn-secondary"
+                  onClick={() => loadRegistrations(selectedWorkshopId)}
+                  disabled={loadingRegistrations || !selectedWorkshopId}
+                  title="Reload attendees list"
+                >
+                  <RefreshCw size={14} className={loadingRegistrations ? 'animate-spin' : ''} />
+                  <span>Refresh</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="admin-btn-secondary"
+                  onClick={exportAttendeesToCsv}
+                  disabled={registrations.length === 0}
+                  title="Download attendee list as CSV"
+                >
+                  <Download size={14} />
+                  <span>Export CSV</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Error in loading attendees */}
+            {regError && (
+              <div className="events-alert events-alert-error">
+                <AlertCircle size={18} />
+                <span>{regError}</span>
+              </div>
+            )}
+
+            {/* Selected Workshop Overview Card */}
+            {currentSelectedWorkshop && (
+              <div className="event-reg-summary-card">
+                <div className="event-reg-summary-info">
+                  {currentSelectedWorkshop.bannerUrl && (
+                    <img
+                      src={currentSelectedWorkshop.bannerUrl}
+                      alt={currentSelectedWorkshop.title}
+                      className="event-reg-summary-thumb"
+                    />
+                  )}
+                  <div className="event-reg-summary-details">
+                    <span className="event-card-category" style={{ display: 'inline-block', marginBottom: '0.25rem' }}>
+                      {currentSelectedWorkshop.category || 'Workshop'}
+                    </span>
+                    <h3>{currentSelectedWorkshop.title}</h3>
+                    <div className="event-reg-summary-meta">
+                      <span>
+                        <CalendarDays size={13} color="#c98b3b" />
+                        {formatEventDate(currentSelectedWorkshop.date)}
+                      </span>
+                      <span>
+                        <Clock size={13} color="#c98b3b" />
+                        {formatEventTime(currentSelectedWorkshop.date, currentSelectedWorkshop.time)}
+                      </span>
+                      <span>
+                        <MapPin size={13} color="#c98b3b" />
+                        {currentSelectedWorkshop.venue || currentSelectedWorkshop.location || 'Chocolate Clicks Studio'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="event-reg-stats-grid">
+                  <div className="event-reg-stat-box">
+                    <span className="stat-val" style={{ color: '#c98b3b' }}>
+                      {registrations.length}
+                    </span>
+                    <span className="stat-lbl">Registered</span>
+                  </div>
+                  <div className="event-reg-stat-box">
+                    <span className="stat-val">
+                      {currentSelectedWorkshop.availableSlots !== undefined
+                        ? currentSelectedWorkshop.availableSlots
+                        : currentSelectedWorkshop.capacity ?? 20}
+                    </span>
+                    <span className="stat-lbl">Capacity</span>
+                  </div>
+                  <div className="event-reg-stat-box">
+                    <span
+                      className="stat-val"
+                      style={{
+                        color:
+                          (currentSelectedWorkshop.capacity ?? 20) - registrations.length <= 0
+                            ? '#ef4444'
+                            : '#10b981',
+                      }}
+                    >
+                      {Math.max(
+                        0,
+                        (currentSelectedWorkshop.capacity ?? 20) - registrations.length
+                      )}
+                    </span>
+                    <span className="stat-lbl">Remaining</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Attendees Data Table */}
+            <div className="event-reg-table-card">
+              <div className="event-reg-table-header">
+                <h4>
+                  <Users size={16} color="#c98b3b" />
+                  <span>Attendee List ({filteredRegistrations.length})</span>
+                </h4>
+                {regSearchTerm && (
+                  <span style={{ fontSize: '0.8rem', color: '#9ca3af' }}>
+                    Showing results for "{regSearchTerm}"
+                  </span>
+                )}
+              </div>
+
+              {loadingRegistrations ? (
+                <div className="events-empty-state">
+                  <RefreshCw size={26} className="animate-spin" />
+                  <p>Loading registered attendees...</p>
+                </div>
+              ) : filteredRegistrations.length === 0 ? (
+                <div className="events-empty-state" style={{ padding: '3rem 1.5rem' }}>
+                  <Users size={38} className="events-empty-icon" />
+                  <h3>
+                    {regSearchTerm
+                      ? 'No matching attendees found'
+                      : 'No registrations for this workshop yet'}
+                  </h3>
+                  <p>
+                    {regSearchTerm
+                      ? 'Try clearing or checking your search filter above.'
+                      : 'When customers register for this workshop on the public website, their details will automatically show up here.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="event-reg-table-responsive">
+                  <table className="event-reg-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '40px' }}>#</th>
+                        <th>Attendee Name</th>
+                        <th>Email Address</th>
+                        <th>Phone Number</th>
+                        <th>Registration Date</th>
+                        <th>Notes / Special Requests</th>
+                        <th style={{ textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredRegistrations.map((reg, index) => {
+                        const initials = (reg.fullName || 'User')
+                          .split(' ')
+                          .map((n) => n[0])
+                          .slice(0, 2)
+                          .join('')
+                          .toUpperCase();
+                        const isDeleting = deletingRegId === reg._id;
+
+                        return (
+                          <tr key={reg._id}>
+                            <td style={{ color: '#6b7280', fontWeight: 600 }}>{index + 1}</td>
+                            <td>
+                              <div className="event-reg-user-cell">
+                                <div className="event-reg-avatar-fallback">{initials}</div>
+                                <span style={{ fontWeight: 600, color: '#f3f4f6' }}>
+                                  {reg.fullName}
+                                </span>
+                              </div>
+                            </td>
+                            <td>
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#d1d5db' }}>
+                                <Mail size={13} color="#9ca3af" />
+                                {reg.email}
+                              </span>
+                            </td>
+                            <td>
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'monospace', color: '#d1d5db' }}>
+                                <Phone size={13} color="#9ca3af" />
+                                {reg.phone}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="event-reg-badge-date">
+                                {new Date(reg.createdAt).toLocaleDateString('en-US', {
+                                  timeZone: 'Asia/Colombo',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                })}
+                              </span>
+                            </td>
+                            <td>
+                              {reg.notes ? (
+                                <span className="event-reg-notes-text" title={reg.notes}>
+                                  {reg.notes}
+                                </span>
+                              ) : (
+                                <span style={{ color: '#6b7280', fontStyle: 'italic', fontSize: '0.8rem' }}>
+                                  None
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ textAlign: 'right' }}>
+                              <button
+                                type="button"
+                                className="event-btn-icon event-btn-icon-danger"
+                                onClick={() => handleDeleteRegistration(reg)}
+                                disabled={isDeleting}
+                                title="Cancel this registration"
+                              >
+                                <Trash2 size={13} />
+                                <span>{isDeleting ? 'Removing...' : 'Cancel'}</span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
 

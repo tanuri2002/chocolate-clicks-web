@@ -30,6 +30,7 @@ import YourHome from './assets/frontend/Home'
 import YourPayment from './assets/frontend/Payment'
 import ScrollToTop from './ScrollToTop';
 import { CartProvider } from './frontend/context/CartContext';
+import { AuthProvider } from './frontend/context/AuthContext';
 import CartDrawer from './frontend/CartDrawer';
 import Checkout from './frontend/Checkout';
 import OrderSuccess from './frontend/OrderSuccess';
@@ -90,80 +91,83 @@ function App() {
   }
 
   return (
-    <CartProvider>
-      <ScrollToTop />
-      <Navbar />
-      <CartDrawer />
-      <main className="app-content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/food" element={<FoodItems />} />
-          <Route path="/items" element={<FoodItems />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedUserRoute>
-                <Profile />
-              </ProtectedUserRoute>
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedUserRoute>
-                <Checkout />
-              </ProtectedUserRoute>
-            }
-          />
-          <Route
-            path="/order/success"
-            element={
-              <ProtectedUserRoute>
-                <OrderSuccess />
-              </ProtectedUserRoute>
-            }
-          />
-          <Route
-            path="/order/cancelled"
-            element={
-              <ProtectedUserRoute>
-                <OrderCancelled />
-              </ProtectedUserRoute>
-            }
-          />
-          {/* Admin Dashboard with sub-routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedAdminRoute>
-                <AdminLayout />
-              </ProtectedAdminRoute>
-            }
-          >
-            <Route index element={<DashboardOverview />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="customers" element={<CustomersPlaceholder />} />
-            <Route path="menu" element={<MenuManagement />} />
-            <Route path="events" element={<EventsManagement />} />
-          </Route>
-          <Route path="/events" element={<OurEvents />} />
-          <Route path="/bake-it-happen" element={<BakeItHappen />} />
-          <Route path="/mask-workshop" element={<MaskWorkshop />} />
-          <Route path="/about" element={<About />} />
+    <AuthProvider>
+      <CartProvider>
+        <ScrollToTop />
+        <Navbar />
+        <CartDrawer />
+        <main className="app-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/food" element={<FoodItems />} />
+            <Route path="/items" element={<FoodItems />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedUserRoute>
+                  <Profile />
+                </ProtectedUserRoute>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedUserRoute>
+                  <Checkout />
+                </ProtectedUserRoute>
+              }
+            />
+            <Route
+              path="/order/success"
+              element={
+                <ProtectedUserRoute>
+                  <OrderSuccess />
+                </ProtectedUserRoute>
+              }
+            />
+            <Route
+              path="/order/cancelled"
+              element={
+                <ProtectedUserRoute>
+                  <OrderCancelled />
+                </ProtectedUserRoute>
+              }
+            />
+            {/* Admin Dashboard with sub-routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminLayout />
+                </ProtectedAdminRoute>
+              }
+            >
+              <Route index element={<DashboardOverview />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="customers" element={<CustomersPlaceholder />} />
+              <Route path="menu" element={<MenuManagement />} />
+              <Route path="events" element={<EventsManagement />} />
+            </Route>
+            <Route path="/events" element={<OurEvents />} />
+            <Route path="/bake-it-happen" element={<BakeItHappen />} />
+            <Route path="/mask-workshop" element={<MaskWorkshop />} />
+            <Route path="/about" element={<About />} />
 
-          {/* Your original routes preserved with /my prefix */}
-          <Route path="/my-home" element={<YourHome />} />
-          <Route path="/my-payment" element={<YourPayment />} />
-          <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
-          <Route path="/workshop/:id/register" element={<WorkshopRegistration />} />
-        </Routes>
-      </main>
-      <Footer />
-    </CartProvider>
+            {/* Your original routes preserved with /my prefix */}
+            <Route path="/my-home" element={<YourHome />} />
+            <Route path="/my-payment" element={<YourPayment />} />
+            <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+            <Route path="/workshop/:id/register" element={<WorkshopRegistration />} />
+            <Route path="/admin-signup" element={<AdminSignUp />} />
+          </Routes>
+        </main>
+        <Footer />
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

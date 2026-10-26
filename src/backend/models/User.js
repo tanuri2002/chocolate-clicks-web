@@ -20,9 +20,29 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Please provide a password"],
+      required: function () {
+        return !this.googleId;
+      },
       minlength: 6,
       select: false, // Password won't be returned by default
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    authProvider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
+    },
+    avatar: {
+      type: String,
+      default: "",
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
     },
     role: {
       type: String,
@@ -43,6 +63,11 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+      index: true,
+    },
     isSeeded: {
       type: Boolean,
       default: false,
@@ -54,7 +79,7 @@ const userSchema = new mongoose.Schema(
 
 // Hash password before saving
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) {
+  if (!this.isModified("password") || !this.password) {
     return;
   }
 
@@ -64,6 +89,9 @@ userSchema.pre("save", async function () {
 
 // Method to compare passwords
 userSchema.methods.matchPassword = async function (enteredPassword) {
+  if (!this.password) {
+    return false;
+  }
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

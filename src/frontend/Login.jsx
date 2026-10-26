@@ -3,12 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../api';
 import './Login.css';
 import login1 from '../assets/login1.jpeg';
+import GoogleAuthButton from './GoogleAuthButton';
+import { useAuth } from './context/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { loginUser } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -27,10 +30,9 @@ export default function Login() {
         throw new Error(data.message || 'Login failed');
       }
 
-      // Store JWT token
+      // Store JWT token and update server-verified auth state
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        loginUser(data.token, data.user);
       }
 
       navigate('/');
@@ -68,6 +70,16 @@ export default function Login() {
               </button>
             </form>
 
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+
+            <GoogleAuthButton
+              text="signin"
+              onError={(msg) => setError(msg)}
+              onSuccess={() => navigate('/')}
+            />
+
             {error && <p style={{ color: 'crimson', textAlign: 'center' }}>{error}</p>}
 
             <p className="login-footer" style={{ marginBottom: "-1rem" }}>
@@ -82,3 +94,4 @@ export default function Login() {
     </div>
   );
 }
+
