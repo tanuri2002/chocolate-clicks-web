@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import AnalyticsKPIs from './AnalyticsKPIs';
 import SalesTrendChart from './SalesTrendChart';
 import TopProductsCharts from './TopProductsCharts';
-import DemandHeatmap from './DemandHeatmap';
+// import DemandHeatmap from './DemandHeatmap';
 import CustomerAnalytics from './CustomerAnalytics';
 import './Analytics.css';
 
@@ -58,8 +58,8 @@ export default function AnalyticsSection() {
       {/* 3. Top Products & Category Revenue Distribution */}
       <TopProductsCharts range={range} />
 
-      {/* 4. Demand Heatmap by Weekday & Hour */}
-      <DemandHeatmap range={range} />
+      {/* 4. Demand Heatmap by Weekday & Hour (Commented out) */}
+      {/* <DemandHeatmap range={range} /> */}
 
       {/* 5. Customer Analytics (New vs Active, Repeat Rate, Segments) */}
       <CustomerAnalytics range={range} />

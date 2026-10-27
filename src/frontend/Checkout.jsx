@@ -459,7 +459,7 @@ export default function Checkout() {
               </div>
 
               <div className="checkout-summary-guarantee">
-                🔒 Secure order processing. Payment step will be connected in Step 4.
+                🔒 100% secure online payment via PayHere. All orders are prepaid (no cash on delivery).
               </div>
             </div>
           </div>
