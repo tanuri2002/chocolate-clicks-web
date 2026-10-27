@@ -89,27 +89,6 @@ export default function Payment() {
                 </div>
               </div>
 
-              {/* Cash on Delivery */}
-              <div
-                className={`payment-method-card ${selectedPayment === "cash" ? "active" : ""}`}
-                onClick={() => setSelectedPayment("cash")}
-              >
-                <div className="method-header">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="cash"
-                    checked={selectedPayment === "cash"}
-                    onChange={(e) => setSelectedPayment(e.target.value)}
-                  />
-                  <div className="method-info">
-                    <h4>Cash on Delivery</h4>
-                    <p>Pay when you receive your order</p>
-                  </div>
-                </div>
-                <span className="icon">💵</span>
-              </div>
-
               {/* Digital Wallet */}
               <div
                 className={`payment-method-card ${selectedPayment === "wallet" ? "active" : ""}`}
